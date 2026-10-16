@@ -1,4 +1,5 @@
 .auth-page {
+  max-width: 768px;
   padding: 20px;
   gap: 28px;
 }
@@ -313,6 +314,10 @@
 }
 
 @media (min-width: 1280px) {
+  .auth-page {
+    max-width: 1280px;
+  }
+
   .auth-page .auth-split-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
