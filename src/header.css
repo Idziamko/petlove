@@ -1,0 +1,133 @@
+.site-brand {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 0;
+  font-size: 20px;
+  line-height: 20px;
+  letter-spacing: -0.8px;
+  font-weight: 700;
+}
+
+.brand-heart {
+  width: 17px;
+  height: 17px;
+}
+
+.header-standard-mode {
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.desktop-nav-pills,
+.header-standard-mode .desktop-nav-pills {
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.nav-link-pill {
+  padding: 14px 19px;
+  border: 1px solid rgb(38 38 38 / 15%);
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 500;
+  letter-spacing: -0.48px;
+}
+
+.nav-link-pill.pill-active {
+  border-color: #f6b83d;
+  box-shadow: none;
+  background: transparent;
+}
+
+.guest-action-cluster {
+  gap: 8px;
+}
+
+.guest-action-cluster .btn-auth-solid,
+.guest-action-cluster .btn-auth-outline {
+  height: 50px;
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: -0.48px;
+}
+
+.guest-action-cluster .btn-auth-solid {
+  width: 119px;
+  padding: 14px 20px;
+}
+
+.guest-action-cluster .btn-auth-outline {
+  width: 149px;
+  padding: 15px 20px;
+  color: #f6b83d;
+  background: #fff4df;
+  border: none;
+}
+
+.home-hero .nav-link-pill,
+.home-hero .guest-action-cluster .btn-auth-solid {
+  border: 1px solid rgb(255 255 255 / 40%);
+  color: #fff;
+}
+
+.home-hero .header-inner {
+  min-height: 40px;
+}
+
+.mobile-hamburger-btn {
+  display: flex;
+  width: 32px;
+  height: 32px;
+}
+
+.desktop-nav-pills,
+.desktop-auth-actions {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .site-brand {
+    font-size: 28px;
+    line-height: 28px;
+    letter-spacing: -1.12px;
+    font-weight: 800;
+  }
+
+  .brand-heart {
+    width: 23px;
+    height: 23px;
+  }
+
+  .home-hero .header-inner {
+    min-height: 50px;
+  }
+
+  .mobile-hamburger-btn {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .desktop-nav-pills,
+  .desktop-auth-actions {
+    display: flex;
+  }
+
+  .header-inner {
+    position: relative;
+  }
+
+  .desktop-nav-pills {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .mobile-hamburger-btn {
+    display: none;
+  }
+}

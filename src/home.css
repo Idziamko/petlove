@@ -1,0 +1,169 @@
+.home-page {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 10px 20px;
+}
+
+.home-hero {
+  position: relative;
+  min-height: 390px;
+  border-radius: 30px;
+  background: #f6b83d;
+  color: #fff;
+}
+
+.home-title {
+  position: absolute;
+  top: 118px;
+  left: 20px;
+  right: 20px;
+  margin: 0;
+  font-size: 50px;
+  line-height: 48px;
+  letter-spacing: -1.5px;
+  font-weight: 700;
+}
+
+.home-title span {
+  color: rgb(255 255 255 / 40%);
+}
+
+.home-description {
+  position: absolute;
+  top: 286px;
+  left: 20px;
+  right: 20px;
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 500;
+  letter-spacing: -0.28px;
+}
+
+.home-photo {
+  position: relative;
+  height: 402px;
+  border-radius: 30px;
+  overflow: hidden;
+}
+
+.home-photo img {
+  position: absolute;
+  width: 227.55%;
+  max-width: none;
+  height: 106.65%;
+  left: -56.81%;
+  top: -5.51%;
+}
+
+.home-hero .pet-header {
+  position: absolute;
+  top: 18px;
+  left: 20px;
+  right: 20px;
+  width: auto;
+  padding: 0;
+}
+
+.home-hero .site-brand {
+  color: #fff;
+}
+
+.home-hero .brand-heart {
+  filter: brightness(0) invert(1);
+}
+
+.home-hero .menu-bar {
+  background: #fff;
+}
+
+@media (max-width: 374px) {
+  .home-title {
+    font-size: clamp(40px, 13.33vw, 50px);
+    line-height: 0.96;
+  }
+}
+
+@media (min-width: 768px) {
+  .home-page {
+    padding: 16px 32px;
+  }
+
+  .home-hero {
+    min-height: 496px;
+    border-radius: 60px;
+  }
+
+  .home-title {
+    top: 178px;
+    left: 32px;
+    right: 32px;
+    font-size: 80px;
+    line-height: 77px;
+    letter-spacing: -2.4px;
+  }
+
+  .home-description {
+    top: 364px;
+    left: auto;
+    right: 32px;
+    width: 255px;
+    font-size: 18px;
+    line-height: 22px;
+    letter-spacing: -0.36px;
+  }
+
+  .home-photo {
+    height: 496px;
+    border-radius: 60px;
+  }
+
+  .home-photo img {
+    width: 169.18%;
+    height: 135.07%;
+    left: -33.1%;
+    top: -20.08%;
+  }
+
+  .home-hero .pet-header {
+    top: 16px;
+    left: 32px;
+    right: 32px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .home-hero {
+    min-height: 384px;
+  }
+
+  .home-title {
+    top: 178px;
+    left: 64px;
+    right: auto;
+    width: 760px;
+    font-size: 90px;
+    line-height: 87px;
+    letter-spacing: -0.48px;
+  }
+
+  .home-description {
+    top: 264px;
+    right: 64px;
+  }
+
+  .home-photo {
+    height: 384px;
+  }
+
+  .home-photo img {
+    width: 104.19%;
+    height: 185.6%;
+    left: -2.3%;
+    top: -42.28%;
+  }
+
+  .home-hero .pet-header {
+    left: 64px;
+    right: 64px;
+  }
+}
