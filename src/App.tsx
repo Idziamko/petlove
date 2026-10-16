@@ -11,6 +11,7 @@ import {
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import HomePage from './HomePage';
+import PetBlock from './PetBlock';
 import {
   authApi,
   citiesApi,
@@ -419,7 +420,7 @@ function LoginPage() {
   });
 
   return (
-    <div className="layout-page-container standard-page-layout">
+    <div className="layout-page-container standard-page-layout auth-page">
       <HeaderBar />
 
       <main className="auth-split-grid">
@@ -427,7 +428,7 @@ function LoginPage() {
           <header className="auth-card-heading">
             <h1 className="auth-screen-title">Log in</h1>
             <p className="auth-screen-desc">
-              Welcome back! Please enter your credentials to manage your pet notices.
+              Welcome! Please enter your credentials to login to the platform:
             </p>
           </header>
 
@@ -475,7 +476,7 @@ function LoginPage() {
                     id="login-email-input"
                     name="email"
                     type="email"
-                    placeholder="Enter email address"
+                    placeholder="Email"
                     className={`text-input-field ${touched.email && errors.email ? 'has-error' : ''}`}
                   />
                   <ErrorMessage name="email" component="div" className="input-error-caption" />
@@ -490,7 +491,7 @@ function LoginPage() {
                       id="login-pass-input"
                       name="password"
                       type={showPassword ? 'text' : 'password'}
-                      placeholder="Enter secret password"
+                      placeholder="Password"
                       className={`text-input-field ${touched.password && errors.password ? 'has-error' : ''}`}
                     />
                     <button
@@ -499,7 +500,7 @@ function LoginPage() {
                       onClick={() => setShowPassword(!showPassword)}
                       aria-label={showPassword ? 'Hide password' : 'Show password'}
                     >
-                      {showPassword ? 'Hide' : 'Show'}
+                      <img src={`${import.meta.env.BASE_URL}icons/${showPassword ? 'eye' : 'eye-off'}.svg`} alt="" />
                     </button>
                   </div>
                   <ErrorMessage name="password" component="div" className="input-error-caption" />
@@ -523,22 +524,7 @@ function LoginPage() {
             )}
           </Formik>
         </div>
-        <aside className="auth-visual-side-card" aria-label="Member benefits">
-          <div className="visual-card-image-box">
-            <img
-              src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=700&q=80"
-              alt="Golden retriever looking directly at camera"
-              className="side-visual-photo"
-            />
-          </div>
-          <div className="visual-card-content">
-            <span className="badge-pill-accent">Member Advantage</span>
-            <h2 className="visual-heading">Save favorites & rehome seamlessly</h2>
-            <p className="visual-body-text">
-              Keep track of animals you are interested in and create notices viewed by thousands of adopters every week.
-            </p>
-          </div>
-        </aside>
+        <PetBlock variant="login" />
       </main>
     </div>
   );
@@ -565,7 +551,7 @@ function RegisterPage() {
   });
 
   return (
-    <div className="layout-page-container standard-page-layout">
+    <div className="layout-page-container standard-page-layout auth-page register-page">
       <HeaderBar />
 
       <main className="auth-split-grid">
@@ -573,7 +559,7 @@ function RegisterPage() {
           <header className="auth-card-heading">
             <h1 className="auth-screen-title">Registration</h1>
             <p className="auth-screen-desc">
-              Create your account to start adopting, fostering, and connecting with shelters.
+              Thank you for your interest in our platform.
             </p>
           </header>
 
@@ -625,7 +611,7 @@ function RegisterPage() {
                     id="reg-name-input"
                     name="name"
                     type="text"
-                    placeholder="Your name"
+                    placeholder="Name"
                     className={`text-input-field ${touched.name && errors.name ? 'has-error' : ''}`}
                   />
                   <ErrorMessage name="name" component="div" className="input-error-caption" />
@@ -639,7 +625,7 @@ function RegisterPage() {
                     id="reg-email-input"
                     name="email"
                     type="email"
-                    placeholder="Email address"
+                    placeholder="Email"
                     className={`text-input-field ${touched.email && errors.email ? 'has-error' : ''}`}
                   />
                   <ErrorMessage name="email" component="div" className="input-error-caption" />
@@ -663,7 +649,7 @@ function RegisterPage() {
                       onClick={() => setShowPassword(!showPassword)}
                       aria-label={showPassword ? 'Hide password' : 'Show password'}
                     >
-                      {showPassword ? 'Hide' : 'Show'}
+                      <img src={`${import.meta.env.BASE_URL}icons/${showPassword ? 'eye' : 'eye-off'}.svg`} alt="" />
                     </button>
                   </div>
                   <ErrorMessage name="password" component="div" className="input-error-caption" />
@@ -677,7 +663,7 @@ function RegisterPage() {
                     id="reg-confirm-input"
                     name="confirmPassword"
                     type={showPassword ? 'text' : 'password'}
-                    placeholder="Repeat password"
+                    placeholder="Confirm password"
                     className={`text-input-field ${touched.confirmPassword && errors.confirmPassword ? 'has-error' : ''}`}
                   />
                   <ErrorMessage name="confirmPassword" component="div" className="input-error-caption" />
@@ -701,22 +687,7 @@ function RegisterPage() {
             )}
           </Formik>
         </div>
-        <aside className="auth-visual-side-card" aria-label="Rescue promise">
-          <div className="visual-card-image-box">
-            <img
-              src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=700&q=80"
-              alt="Charming tabby kitten on clean background"
-              className="side-visual-photo"
-            />
-          </div>
-          <div className="visual-card-content">
-            <span className="badge-pill-accent">Verified Community</span>
-            <h2 className="visual-heading">Safe adoption standards</h2>
-            <p className="visual-body-text">
-              Every shelter partner and individual guardian profile is moderated to maintain ethical, healthy adoption experiences.
-            </p>
-          </div>
-        </aside>
+        <PetBlock variant="register" />
       </main>
     </div>
   );

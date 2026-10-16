@@ -4,6 +4,10 @@
   padding: 10px 20px;
 }
 
+body:has(.home-page) {
+  background: #f9f9f9;
+}
+
 .home-hero {
   position: relative;
   min-height: 390px;
@@ -132,6 +136,10 @@
 }
 
 @media (min-width: 1280px) {
+  body:has(.home-page) {
+    background: #fff;
+  }
+
   .home-hero {
     min-height: 384px;
   }

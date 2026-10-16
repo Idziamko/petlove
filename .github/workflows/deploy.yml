@@ -29,6 +29,12 @@ jobs:
       - run: npm ci
       - run: npm run build -- --base=/petlove/
       - run: cp dist/index.html dist/404.html
+      - name: Add page entry points
+        run: |
+          for page in home news notices friends login register profile add-pet; do
+            mkdir -p "dist/$page"
+            cp dist/index.html "dist/$page/index.html"
+          done
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

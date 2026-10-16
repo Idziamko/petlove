@@ -1,0 +1,373 @@
+.auth-page {
+  padding: 20px;
+  gap: 28px;
+}
+
+.auth-page .pet-header {
+  padding: 4px 0;
+}
+
+.auth-page .auth-split-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pet-block {
+  position: relative;
+  height: 280px;
+  border-radius: 30px;
+  overflow: hidden;
+  background: #f6b83d;
+  order: -1;
+}
+
+.pet-block-background {
+  position: absolute;
+  top: 37px;
+  left: calc(50% - 146px);
+  width: 311px;
+  height: 375px;
+  max-width: none;
+}
+
+.pet-block-photo {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.pet-block-photo img {
+  position: absolute;
+  width: 134.6%;
+  height: 160.83%;
+  max-width: none;
+  left: -16.91%;
+  top: -10.48%;
+}
+
+.pet-block-register .pet-block-photo img {
+  width: 151.48%;
+  height: 180.19%;
+  left: -29.33%;
+  top: -8.82%;
+}
+
+.pet-block-card {
+  display: none;
+}
+
+.auth-page .auth-form-card {
+  min-height: 422px;
+  padding: 60px 20px;
+  border-radius: 30px;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.auth-page .auth-card-heading {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.auth-page .auth-screen-title {
+  font-size: 28px;
+  line-height: 28px;
+  letter-spacing: -1.12px;
+}
+
+.auth-page .auth-screen-desc {
+  color: #262626;
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 500;
+  letter-spacing: -0.28px;
+}
+
+.auth-page .formik-auth-form {
+  gap: 10px;
+}
+
+.auth-page .input-field-group > label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  clip-path: inset(50%);
+  overflow: hidden;
+}
+
+.auth-page .input-field-group {
+  gap: 4px;
+}
+
+.auth-page .text-input-field {
+  height: 42px;
+  padding: 11px 12px;
+  border: 1px solid rgb(38 38 38 / 15%);
+  background: #fff;
+  border-radius: 30px;
+  font-size: 14px;
+  line-height: 18px;
+  letter-spacing: -0.42px;
+  box-shadow: none;
+}
+
+.auth-page .text-input-field:focus {
+  border-color: #f6b83d;
+}
+
+.auth-page .text-input-field.has-error {
+  border-color: #ef2447;
+}
+
+.auth-page .password-control-wrapper input {
+  padding-right: 44px;
+}
+
+.auth-page .password-toggle-trigger {
+  right: 12px;
+  width: 22px;
+  height: 24px;
+}
+
+.auth-page .password-toggle-trigger img {
+  width: 18px;
+  height: 18px;
+}
+
+.auth-page .formik-auth-form > button[type='submit'] {
+  height: 42px;
+  padding: 12px;
+  margin-top: 30px;
+  font-size: 14px;
+  line-height: 18px;
+  letter-spacing: -0.42px;
+}
+
+.register-page .formik-auth-form > button[type='submit'] {
+  margin-top: 14px;
+}
+
+.auth-page .auth-reroute-footer {
+  margin-top: 2px;
+  color: rgb(38 38 38 / 50%);
+  font-size: 12px;
+  line-height: 14px;
+  letter-spacing: -0.36px;
+}
+
+@media (min-width: 768px) {
+  .auth-page {
+    padding: 32px;
+    gap: 32px;
+  }
+
+  .auth-page .pet-header {
+    height: 50px;
+    padding: 0 32px;
+  }
+
+  .auth-page .auth-split-grid {
+    gap: 16px;
+  }
+
+  .pet-block {
+    height: 302px;
+    border-radius: 60px;
+  }
+
+  .pet-block-background {
+    top: 53px;
+    left: calc(50% - 228px);
+    width: 530px;
+    height: 634px;
+  }
+
+  .pet-block-photo {
+    left: calc(50% - 102px);
+    width: 364px;
+  }
+
+  .pet-block-photo img {
+    width: 123.88%;
+    height: 149.12%;
+    left: -11.99%;
+    top: -9.71%;
+  }
+
+  .pet-block-card {
+    display: flex;
+    position: absolute;
+    left: 32px;
+    bottom: 32px;
+    width: 294px;
+    height: 121px;
+    padding: 16px;
+    gap: 8px;
+    border-radius: 20px;
+    background: #fff;
+  }
+
+  .pet-block-emoji {
+    display: grid;
+    place-items: center;
+    flex: 0 0 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #fff4df;
+    font-size: 32px;
+    line-height: 32px;
+  }
+
+  .pet-block-info {
+    padding-top: 3px;
+    font-size: 12px;
+    line-height: 14px;
+    letter-spacing: -0.24px;
+    color: rgb(38 38 38 / 80%);
+  }
+
+  .pet-block-details {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .pet-block-details strong {
+    font-size: 16px;
+    line-height: 20px;
+    color: #f6b83d;
+  }
+
+  .pet-block-details span {
+    color: rgb(38 38 38 / 50%);
+  }
+
+  .auth-page .auth-form-card {
+    min-height: 560px;
+    padding: 71px max(40px, calc((100% - 424px) / 2));
+    border-radius: 60px;
+    gap: 32px;
+  }
+
+  .auth-page .auth-card-heading {
+    gap: 16px;
+  }
+
+  .auth-page .auth-screen-title {
+    font-size: 54px;
+    line-height: 54px;
+    letter-spacing: -2.16px;
+  }
+
+  .auth-page .auth-screen-desc {
+    font-size: 18px;
+    line-height: 22px;
+    letter-spacing: -0.36px;
+  }
+
+  .auth-page .formik-auth-form {
+    gap: 16px;
+  }
+
+  .auth-page .text-input-field {
+    height: 52px;
+    padding: 15px 16px;
+    font-size: 16px;
+    line-height: 20px;
+    letter-spacing: -0.48px;
+  }
+
+  .auth-page .password-toggle-trigger {
+    right: 16px;
+  }
+
+  .auth-page .password-toggle-trigger img {
+    width: 22px;
+    height: 22px;
+  }
+
+  .auth-page .formik-auth-form > button[type='submit'] {
+    height: 52px;
+    font-size: 16px;
+    line-height: 20px;
+    margin-top: 48px;
+    letter-spacing: -0.48px;
+  }
+
+  .register-page .formik-auth-form > button[type='submit'] {
+    margin-top: 16px;
+  }
+
+  .auth-page .auth-reroute-footer {
+    margin: 0;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: -0.42px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .auth-page .auth-split-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+
+  .pet-block {
+    height: 654px;
+  }
+
+  .pet-block-background {
+    top: 53px;
+    left: 34px;
+  }
+
+  .pet-block-photo {
+    left: 40px;
+    top: -6px;
+    width: 512px;
+    height: 660px;
+  }
+
+  .pet-block-photo img {
+    width: 153.63%;
+    height: 119.08%;
+    left: -26.87%;
+    top: 1.42%;
+  }
+
+  .pet-block-register .pet-block-photo {
+    left: 36px;
+    top: 22px;
+    width: 536px;
+    height: 632px;
+  }
+
+  .pet-block-register .pet-block-photo img {
+    width: 155.3%;
+    height: 131.71%;
+    left: -32.4%;
+    top: -5.77%;
+  }
+
+  .pet-block-card {
+    left: 61px;
+    bottom: 97px;
+  }
+
+  .auth-page .auth-form-card {
+    min-height: 654px;
+    padding: 118px 84px;
+  }
+
+  .register-page .auth-form-card {
+    padding-top: 77px;
+    padding-bottom: 77px;
+  }
+}
