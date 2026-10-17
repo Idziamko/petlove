@@ -6,3 +6,7 @@ export function focusUrlField(id: string) {
   input.focus();
   input.select();
 }
+
+export function isPasswordSecure(touched: boolean | undefined, error: string | undefined, value: string) {
+  return Boolean(touched && !error && value);
+}

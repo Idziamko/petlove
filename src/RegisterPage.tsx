@@ -6,7 +6,7 @@ import Icon from './Icon';
 import PetBlock from './PetBlock';
 import HeaderBar from './HeaderBar';
 import { useAppStore } from './store';
-import { EMAIL_PATTERN } from './formUtils';
+import { EMAIL_PATTERN, isPasswordSecure } from './formUtils';
 import { authApi, getApiErrorMessage } from './api';
 
 export default function RegisterPage() {
@@ -20,7 +20,7 @@ export default function RegisterPage() {
       .min(2, 'Name must be at least 2 characters')
       .required('Full name is required'),
     email: Yup.string()
-      .matches(EMAIL_PATTERN, 'Please provide a valid email')
+      .matches(EMAIL_PATTERN, 'Enter a valid Email')
       .required('Email address is required'),
     password: Yup.string()
       .min(7, 'Password must be at least 7 characters')
@@ -74,7 +74,7 @@ export default function RegisterPage() {
               }
             }}
           >
-            {({ isSubmitting, errors, touched, status }) => (
+            {({ isSubmitting, errors, touched, status, values, setFieldValue }) => (
               <Form className="formik-auth-form" noValidate>
                 {status && (
                   <div className="form-message form-message-error" role="alert">
@@ -100,13 +100,20 @@ export default function RegisterPage() {
                   <label htmlFor="reg-email-input" className="input-field-label">
                     Email
                   </label>
-                  <Field
-                    id="reg-email-input"
-                    name="email"
-                    type="email"
-                    placeholder="Email"
-                    className={`text-input-field ${touched.email && errors.email ? 'has-error' : ''}`}
-                  />
+                  <div className="password-control-wrapper">
+                    <Field
+                      id="reg-email-input"
+                      name="email"
+                      type="email"
+                      placeholder="Email"
+                      className={`text-input-field ${touched.email && errors.email ? 'has-error' : ''}`}
+                    />
+                    {touched.email && errors.email && (
+                      <button type="button" className="field-icon-button" onClick={() => setFieldValue('email', '')} aria-label="Clear email">
+                        <Icon name="cross-small" width="22" height="22" />
+                      </button>
+                    )}
+                  </div>
                   <ErrorMessage name="email" component="div" className="input-error-caption" />
                 </div>
 
@@ -120,8 +127,9 @@ export default function RegisterPage() {
                       name="password"
                       type={showPassword ? 'text' : 'password'}
                       placeholder="Password"
-                      className={`text-input-field ${touched.password && errors.password ? 'has-error' : ''}`}
+                      className={`text-input-field ${touched.password && errors.password ? 'has-error' : ''} ${isPasswordSecure(touched.password, errors.password, values.password) ? 'has-success' : ''}`}
                     />
+                    {isPasswordSecure(touched.password, errors.password, values.password) && <Icon name="check" className="field-check-icon" width="22" height="22" />}
                     <button
                       type="button"
                       className="password-toggle-trigger"
@@ -132,6 +140,7 @@ export default function RegisterPage() {
                     </button>
                   </div>
                   <ErrorMessage name="password" component="div" className="input-error-caption" />
+                  {isPasswordSecure(touched.password, errors.password, values.password) && <div className="input-success-caption">Password is secure</div>}
                 </div>
 
                 <div className="input-field-group">

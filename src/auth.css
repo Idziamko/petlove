@@ -404,3 +404,68 @@
     margin-bottom: -4px;
   }
 }
+
+.auth-page .text-input-field.has-error {
+  background: #fff;
+}
+
+.auth-page .text-input-field.has-success {
+  border-color: #08aa83;
+}
+
+.auth-page .field-icon-button,
+.auth-page .field-check-icon {
+  position: absolute;
+  right: 12px;
+  width: 18px;
+  height: 18px;
+}
+
+.auth-page .field-check-icon {
+  right: 38px;
+}
+
+.auth-page .field-icon-button :is(img, svg) {
+  width: 18px;
+  height: 18px;
+}
+
+.auth-page .input-error-caption,
+.auth-page .input-success-caption {
+  padding-left: 12px;
+  font-size: 12px;
+  line-height: 14px;
+  letter-spacing: -0.36px;
+  font-weight: 500;
+}
+
+.auth-page .input-error-caption {
+  color: #ef2447;
+}
+
+.auth-page .input-success-caption {
+  color: #08aa83;
+}
+
+@media (min-width: 768px) {
+  .auth-page .field-icon-button,
+  .auth-page .field-check-icon {
+    right: 16px;
+    width: 22px;
+    height: 22px;
+  }
+
+  .auth-page .field-check-icon {
+    right: 50px;
+  }
+
+  .auth-page .field-icon-button :is(img, svg) {
+    width: 22px;
+    height: 22px;
+  }
+
+  .auth-page .input-error-caption,
+  .auth-page .input-success-caption {
+    padding-left: 16px;
+  }
+}
