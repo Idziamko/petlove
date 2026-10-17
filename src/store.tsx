@@ -15,6 +15,7 @@ interface AppStore {
   addUserPet: (pet: AddPetRequest) => Promise<void>;
   removeUserPet: (id: string) => Promise<void>;
   clearPrivateData: () => void;
+  notifyError: (message: string) => void;
 }
 
 const AppStoreContext = createContext<AppStore | null>(null);
@@ -48,6 +49,10 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     setViewedNotices([]);
     setUserPets([]);
     pendingFavorites.current.clear();
+  }, []);
+
+  const notifyError = useCallback((message: string) => {
+    setError(message);
   }, []);
 
   const refreshUser = useCallback(async () => {
@@ -127,7 +132,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
   if (!isReady) return <Loader progress={startupProgress} />;
 
   return (
-    <AppStoreContext.Provider value={{ currentUser, setCurrentUser, favoriteIds: favoriteNotices.map((notice) => notice.id), favoriteNotices, viewedNotices, userPets, refreshUser, toggleFavorite, addUserPet, removeUserPet, clearPrivateData }}>
+    <AppStoreContext.Provider value={{ currentUser, setCurrentUser, favoriteIds: favoriteNotices.map((notice) => notice.id), favoriteNotices, viewedNotices, userPets, refreshUser, toggleFavorite, addUserPet, removeUserPet, clearPrivateData, notifyError }}>
       {error && <div className="app-notification" role="alert"><span>{error}</span><button type="button" aria-label="Dismiss notification" onClick={() => setError('')}>×</button></div>}
       {children}
     </AppStoreContext.Provider>

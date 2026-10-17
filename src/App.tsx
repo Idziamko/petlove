@@ -83,7 +83,7 @@ interface HeaderBarProps {
 }
 
 function HeaderBar({ variant = 'standard' }: HeaderBarProps) {
-  const { currentUser, setCurrentUser, clearPrivateData } = useAppStore();
+  const { currentUser, setCurrentUser, clearPrivateData, notifyError } = useAppStore();
   const [menuOpen, setMenuOpen] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
   const [logoutError, setLogoutError] = useState<string | null>(null);
@@ -110,8 +110,10 @@ function HeaderBar({ variant = 'standard' }: HeaderBarProps) {
     setLogoutError(null);
     try {
       await authApi.signOut();
-    } catch {
-      setLogoutError('The server could not close the session, but this device has been logged out.');
+    } catch (error) {
+      const message = getApiErrorMessage(error, 'The server could not close the session, but this device has been logged out.');
+      setLogoutError(message);
+      notifyError(message);
     } finally {
       setCurrentUser(null);
       clearPrivateData();
@@ -180,6 +182,15 @@ function HeaderBar({ variant = 'standard' }: HeaderBarProps) {
             </div>
           )}
         </div>
+        {currentUser && (
+          <Link to="/profile" className="mobile-user-link" aria-label="View profile">
+            {currentUser.avatar ? (
+              <img src={currentUser.avatar} alt="" className="mobile-user-avatar" />
+            ) : (
+              <img src={`${import.meta.env.BASE_URL}icons/profile-user.svg`} alt="" className="mobile-user-avatar" />
+            )}
+          </Link>
+        )}
         <button
           type="button"
           className="mobile-hamburger-btn"
@@ -988,7 +999,7 @@ function ProfilePage() {
             onClick={(event) => event.stopPropagation()}
           >
             <button type="button" className="modal-close-button profile-edit-close" onClick={() => setIsEditing(false)} aria-label="Close edit profile">
-              <span aria-hidden="true">×</span>
+              <img src={`${import.meta.env.BASE_URL}icons/modal-close.svg`} alt="" />
             </button>
             <Formik
               initialValues={{
@@ -1005,18 +1016,34 @@ function ProfilePage() {
                 <Form className="profile-edit-panel" noValidate>
                   <h2 id="profile-edit-title">Edit information</h2>
                   {status && <p className="input-error-caption" role="alert">{String(status)}</p>}
-                  <label htmlFor="edit-name-input">Name<Field id="edit-name-input" name="name" type="text" className={touched.name && errors.name ? 'has-error' : ''} /></label>
-                  <ErrorMessage name="name" component="span" className="input-error-caption" />
-                  <label htmlFor="edit-email-input">Email<Field id="edit-email-input" name="email" type="email" className={touched.email && errors.email ? 'has-error' : ''} /></label>
-                  <ErrorMessage name="email" component="span" className="input-error-caption" />
-                  <label htmlFor="edit-avatar-input">Avatar URL<Field id="edit-avatar-input" name="avatar" type="url" className={touched.avatar && errors.avatar ? 'has-error' : ''} /></label>
-                  <ErrorMessage name="avatar" component="span" className="input-error-caption" />
-                  <label htmlFor="edit-phone-input">Phone<Field id="edit-phone-input" name="phone" type="tel" placeholder="+380" className={touched.phone && errors.phone ? 'has-error' : ''} /></label>
-                  <ErrorMessage name="phone" component="span" className="input-error-caption" />
-                  <div className="profile-edit-actions">
-                    <button type="button" onClick={() => setIsEditing(false)}>Cancel</button>
-                    <button type="submit" disabled={isSubmitting}>{isSubmitting ? 'Saving…' : 'Save'}</button>
-                  </div>
+                    <div className="profile-edit-photo-block">
+                      <div className="profile-edit-photo-preview">
+                        {currentUser.avatar ? <img src={currentUser.avatar} alt="" /> : <img src={`${import.meta.env.BASE_URL}icons/profile-user.svg`} alt="" />}
+                      </div>
+                      <div className="profile-edit-photo-controls">
+                        <Field
+                          id="edit-avatar-input"
+                          name="avatar"
+                          type="url"
+                          aria-label="Avatar URL"
+                          placeholder="Enter URL"
+                          className={`profile-edit-url-input ${touched.avatar && errors.avatar ? 'has-error' : ''}`}
+                        />
+                        <button type="button" className="profile-edit-upload-button" onClick={() => document.getElementById('edit-avatar-input')?.focus()}>
+                          Upload photo <img src={`${import.meta.env.BASE_URL}icons/upload-cloud.svg`} alt="" />
+                        </button>
+                      </div>
+                    </div>
+                    <ErrorMessage name="avatar" component="span" className="input-error-caption" />
+                    <div className="profile-edit-fields">
+                      <Field id="edit-name-input" name="name" type="text" aria-label="Name" className={touched.name && errors.name ? 'has-error' : ''} />
+                      <ErrorMessage name="name" component="span" className="input-error-caption" />
+                      <Field id="edit-email-input" name="email" type="email" aria-label="Email" className={touched.email && errors.email ? 'has-error' : ''} />
+                      <ErrorMessage name="email" component="span" className="input-error-caption" />
+                      <Field id="edit-phone-input" name="phone" type="tel" aria-label="Phone" placeholder="+380" className={touched.phone && errors.phone ? 'has-error' : ''} />
+                      <ErrorMessage name="phone" component="span" className="input-error-caption" />
+                    </div>
+                    <button type="submit" className="profile-edit-save" disabled={isSubmitting}>{isSubmitting ? 'Saving…' : 'Save'}</button>
                 </Form>
               )}
             </Formik>
@@ -1029,8 +1056,6 @@ function ProfilePage() {
 function AddPetPage() {
   const { addUserPet, currentUser } = useAppStore();
   const navigate = useNavigate();
-  const [successBanner, setSuccessBanner] = useState(false);
-
   const addPetSchema = Yup.object().shape({
     title: Yup.string().required('Title is required'),
     name: Yup.string().required('Pet name is required'),
@@ -1061,19 +1086,12 @@ function AddPetPage() {
             <h1>Add my pet <span>/ Personal details</span></h1>
           </header>
 
-          {successBanner && (
-            <div className="form-message form-message-success" role="alert">
-              <span className="banner-icon-mark">✓</span>
-              <span>Pet successfully added to your profile! Redirecting...</span>
-            </div>
-          )}
-
           <Formik
             initialValues={{
               title: '',
               name: '',
               birthday: '',
-              species: 'Dog',
+              species: '',
               sex: '',
               imageUrl: '',
             }}
@@ -1091,7 +1109,6 @@ function AddPetPage() {
                   birthday,
                   sex: values.sex.toLowerCase() as NoticeSex,
                 });
-                setSuccessBanner(true);
                 navigate('/profile', { replace: true });
               } catch (error) {
                 setStatus(getApiErrorMessage(error, 'Unable to save this pet right now.'));
@@ -1192,6 +1209,7 @@ function AddPetPage() {
                       className="filter-select-control w-full"
                       style={{ backgroundImage: `url(${import.meta.env.BASE_URL}icons/chevron-down.svg)` }}
                     >
+                      <option value="" disabled>Type of pet</option>
                       <option value="Dog">Dog</option>
                       <option value="Cat">Cat</option>
                       <option value="Bird">Bird</option>

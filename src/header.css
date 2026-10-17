@@ -135,12 +135,31 @@
 .mobile-hamburger-btn { padding: 0; }
 .menu-icon-mobile { display: block; width: 32px; height: 32px; }
 .menu-icon-tablet { display: none; width: 36px; height: 36px; }
+.mobile-user-link { display: none; }
 .home-hero .mobile-hamburger-btn { color: white; }
 @media (min-width: 768px) {
   .desktop-auth-actions { display: flex; margin-left: auto; }
   .menu-icon-mobile { display: none; }
   .menu-icon-tablet { display: block; }
   .header-standard-mode .site-brand { font-weight: 700; }
+}
+
+@media (max-width: 767px) {
+  .mobile-user-link {
+    display: block;
+    width: 40px;
+    height: 40px;
+    margin-left: auto;
+    margin-right: 12px;
+    flex: 0 0 40px;
+  }
+
+  .mobile-user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
 }
 
 .nav-link-pill:hover { border-color: #f6b83d; background: transparent; }
