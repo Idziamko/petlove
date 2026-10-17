@@ -133,7 +133,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
 
   return (
     <AppStoreContext.Provider value={{ currentUser, setCurrentUser, favoriteIds: favoriteNotices.map((notice) => notice.id), favoriteNotices, viewedNotices, userPets, refreshUser, toggleFavorite, addUserPet, removeUserPet, clearPrivateData, notifyError }}>
-      {error && <div className="app-notification" role="alert"><span>{error}</span><button type="button" aria-label="Dismiss notification" onClick={() => setError('')}>×</button></div>}
+      {error && <div className="app-notification" role="alert"><span>{error}</span><button className="notification-dismiss" type="button" aria-label="Dismiss notification" onClick={() => setError('')}><img src={`${import.meta.env.BASE_URL}icons/modal-close.svg`} alt="" /></button></div>}
       {children}
     </AppStoreContext.Provider>
   );

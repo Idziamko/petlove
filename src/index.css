@@ -35,6 +35,19 @@
   background: #fff;
 }
 
+.notification-dismiss {
+  display: grid;
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+  place-items: center;
+}
+
+.notification-dismiss img {
+  width: 18px;
+  height: 18px;
+}
+
 .app-session-loading {
   min-height: 100vh;
   display: grid;
@@ -1621,9 +1634,22 @@ img {
 }
 
 .modal-actions-bar .fav-highlight {
-  background: #fee2e2;
-  color: #ef4444;
-  border-color: #fca5a5;
+  background: var(--color-primary);
+  color: var(--color-white);
+  border-color: var(--color-primary);
+}
+
+.modal-favorite-button {
+  gap: 8px;
+}
+
+.modal-favorite-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.modal-actions-bar .fav-highlight .modal-favorite-icon {
+  filter: brightness(0) invert(1);
 }
 
 .state-empty-box {

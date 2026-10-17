@@ -772,9 +772,10 @@ function NoticesPage() {
                     <button
                       type="button"
                       onClick={() => handleFavoriteToggle(focusedPet.id)}
-                      className={`btn-auth-outline ${favoriteIds.includes(focusedPet.id) ? 'fav-highlight' : ''}`}
+                      className={`btn-auth-outline modal-favorite-button ${favoriteIds.includes(focusedPet.id) ? 'fav-highlight' : ''}`}
                     >
-                      {favoriteIds.includes(focusedPet.id) ? '♥ Favorited' : '♡ Add to favorites'}
+                      <Icon name="heart" className="modal-favorite-icon" />
+                      <span>{favoriteIds.includes(focusedPet.id) ? 'Favorited' : 'Add to favorites'}</span>
                     </button>
                     {focusedPet.contact ? (
                       <a href={focusedPet.contact} className="btn-primary-filled">Contact</a>

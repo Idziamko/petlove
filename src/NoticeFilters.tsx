@@ -65,7 +65,7 @@ export default function NoticeFilters({ value, onChange }: { value: NoticeFilter
         update('sort', sorts[index]);
         const buttons = event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('[role="radio"]');
         buttons?.[index].focus();
-      }} onClick={() => update('sort', value.sort === sort ? undefined : sort)}>{sort}{value.sort === sort && <span aria-hidden="true"> ×</span>}</button>)}
+      }} onClick={() => update('sort', value.sort === sort ? undefined : sort)}>{sort}</button>)}
       {Object.values(value).some(Boolean) && <button className="notice-reset" type="button" onClick={() => onChange({})}>Reset</button>}
     </div>
     {error && <p role="alert">{error} <button type="button" onClick={() => setRetry(previous => previous + 1)}>Retry</button></p>}

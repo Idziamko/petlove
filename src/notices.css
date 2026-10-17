@@ -9,6 +9,7 @@
 .notice-search input::placeholder { color: #262626; }
 .notice-search button { flex-shrink: 0; display: grid; place-items: center; width: 18px; height: 18px; }
 .notice-search svg { width: 18px; height: 18px; }
+.notice-search .search-clear-icon { width: 18px; height: 18px; }
 .notice-select { min-width: 0; font-size: 14px; line-height: 18px; letter-spacing: -.42px; }
 .notice-select-species, .notice-select-location { grid-column: 1 / -1; }
 .notice-select .pet-select__control { border: none; border-radius: 30px; min-height: 42px; background: white; box-shadow: none; }
