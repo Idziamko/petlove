@@ -1824,6 +1824,69 @@ img {
 
 .logout-modal-card .logout-cancel-btn:hover { background: rgba(38, 38, 38, 0.1); }
 
+.congrats-modal-card {
+  width: 410px;
+  height: 364px;
+  min-height: 364px;
+}
+
+.congrats-modal-content {
+  position: absolute;
+  top: 55px;
+  left: 50%;
+  width: 300px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.congrats-modal-copy {
+  display: flex;
+  width: 300px;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+
+.congrats-modal-text {
+  display: flex;
+  width: 300px;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.congrats-modal-text h2 {
+  margin: 0;
+  color: var(--color-primary);
+  font-size: 24px;
+  line-height: 28px;
+  font-weight: 700;
+  letter-spacing: -0.72px;
+}
+
+.congrats-modal-text p {
+  width: 300px;
+  margin: 0;
+  color: var(--color-dark);
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 500;
+  letter-spacing: -0.28px;
+  text-align: center;
+}
+
+.congrats-modal-copy > a {
+  width: 250px;
+  height: 48px;
+  padding: 14px 10px;
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: -0.48px;
+}
+
 @media (max-width: 767px) {
   .attention-modal-card {
     width: 335px;
@@ -1890,6 +1953,38 @@ img {
   }
 
   .logout-modal-card .auth-buttons-inline .logout-cancel-btn { width: 134px; }
+
+  .congrats-modal-card {
+    width: 335px;
+    height: 322px;
+    min-height: 322px;
+  }
+
+  .congrats-modal-content {
+    top: 40px;
+    width: 285px;
+  }
+
+  .congrats-modal-copy,
+  .congrats-modal-text,
+  .congrats-modal-text p { width: 285px; }
+
+  .congrats-modal-copy { gap: 24px; }
+
+  .congrats-modal-text h2 {
+    font-size: 20px;
+    line-height: 20px;
+    letter-spacing: -0.4px;
+  }
+
+  .congrats-modal-copy > a {
+    width: 285px;
+    height: 42px;
+    padding: 12px 8px;
+    font-size: 14px;
+    line-height: 18px;
+    letter-spacing: -0.42px;
+  }
 }
 
 @media (max-width: 1024px) {
@@ -2477,10 +2572,12 @@ img {
 
 .profile-empty-state p {
   max-width: 458px;
-  color: #f6b83d;
+  color: #262626;
   font-size: 14px;
   line-height: 20px;
 }
+
+.profile-empty-state strong { color: #f6b83d; font-weight: 700; }
 
 .profile-edit-panel {
   position: absolute;

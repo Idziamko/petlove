@@ -524,10 +524,25 @@ function NoticesPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [authPromptOpen, setAuthPromptOpen] = useState(false);
+  const [congratsOpen, setCongratsOpen] = useState(false);
   const [detailError, setDetailError] = useState('');
   const [loadingNoticeId, setLoadingNoticeId] = useState('');
   const detailDialogRef = React.useRef<HTMLDivElement>(null);
   const authDialogRef = React.useRef<HTMLDivElement>(null);
+  const congratsDialogRef = React.useRef<HTMLDivElement>(null);
+
+  const handleFavoriteToggle = async (id: string) => {
+    if (!currentUser) {
+      setAuthPromptOpen(true);
+      return;
+    }
+    const wasFavorite = favoriteIds.includes(id);
+    await toggleFavorite(id);
+    if (!wasFavorite) {
+      setFocusedPet(null);
+      setCongratsOpen(true);
+    }
+  };
 
   const openNotice = async (pet: PetNotice) => {
     if (!currentUser) {
@@ -549,6 +564,7 @@ function NoticesPage() {
 
   useDialogA11y(Boolean(focusedPet), detailDialogRef, () => setFocusedPet(null));
   useDialogA11y(authPromptOpen, authDialogRef, () => setAuthPromptOpen(false));
+  useDialogA11y(congratsOpen, congratsDialogRef, () => setCongratsOpen(false));
 
   const [locations, setLocations] = useState<Record<string, string>>({});
   React.useEffect(() => {
@@ -640,13 +656,7 @@ function NoticesPage() {
                       </button>
                     <button
                       type="button"
-                      onClick={() => {
-                        if (!currentUser) {
-                          setAuthPromptOpen(true);
-                          return;
-                        }
-                        toggleFavorite(pet.id);
-                      }}
+                        onClick={() => handleFavoriteToggle(pet.id)}
                       className={`notice-heart-button ${isFav ? 'is-fav' : ''}`}
                       aria-label={isFav ? 'Remove from favorites' : 'Add to favorites'}
                     >
@@ -746,7 +756,7 @@ function NoticesPage() {
                   <div className="modal-actions-bar">
                     <button
                       type="button"
-                      onClick={() => toggleFavorite(focusedPet.id)}
+                      onClick={() => handleFavoriteToggle(focusedPet.id)}
                       className={`btn-auth-outline ${favoriteIds.includes(focusedPet.id) ? 'fav-highlight' : ''}`}
                     >
                       {favoriteIds.includes(focusedPet.id) ? '♥ Favorited' : '♡ Add to favorites'}
@@ -799,6 +809,40 @@ function NoticesPage() {
             </div>
           </div>
         )}
+        {congratsOpen && (
+          <div className="modal-dialog-overlay" onClick={() => setCongratsOpen(false)}>
+            <div
+              ref={congratsDialogRef}
+              className="attention-modal-card congrats-modal-card"
+              onClick={(event) => event.stopPropagation()}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Favorite added"
+            >
+              <button
+                type="button"
+                className="modal-dismiss-btn"
+                onClick={() => setCongratsOpen(false)}
+                aria-label="Close congratulations"
+              >
+                <img src={`${import.meta.env.BASE_URL}icons/modal-close.svg`} alt="" />
+              </button>
+              <div className="congrats-modal-content">
+                <div className="attention-modal-icon">
+                  <img src={`${import.meta.env.BASE_URL}icons/modal-emoji-circle.svg`} alt="" />
+                  <span aria-hidden="true">🐈</span>
+                </div>
+                <div className="congrats-modal-copy">
+                  <div className="congrats-modal-text">
+                    <h2>Congrats</h2>
+                    <p>The first fluff in the favorites! May your friendship be the happiest and filled with fun.</p>
+                  </div>
+                  <Link to="/profile" className="btn-primary-filled" onClick={() => setCongratsOpen(false)}>Go to profile</Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
@@ -846,6 +890,11 @@ function ProfilePage() {
 
   const profileSchema = Yup.object().shape({
     name: Yup.string().required('Full name is required'),
+    email: Yup.string()
+      .matches(EMAIL_PATTERN, 'Please provide a valid email')
+      .required('Email address is required'),
+    avatar: Yup.string()
+      .matches(/^https?:\/\/.*\.(?:png|jpg|jpeg|gif|bmp|webp)$/, 'Use a direct image URL'),
     phone: Yup.string().matches(/^\+38\d{10}$/, {
       message: 'Use the +380XXXXXXXXX format',
       excludeEmptyString: true,
@@ -853,7 +902,7 @@ function ProfilePage() {
   });
 
   const handleSaveProfile = async (
-    values: { name: string; phone: string },
+    values: { name: string; email: string; avatar: string; phone: string },
     { setSubmitting, setStatus }: { setSubmitting: (isSubmitting: boolean) => void; setStatus: (status?: unknown) => void },
   ) => {
     try {
@@ -896,7 +945,12 @@ function ProfilePage() {
             </section>
           ) : (
             <Formik
-              initialValues={{ name: currentUser.name, phone: currentUser.phone || '' }}
+              initialValues={{
+                name: currentUser.name,
+                email: currentUser.email,
+                avatar: currentUser.avatar,
+                phone: currentUser.phone || '',
+              }}
               enableReinitialize
               validationSchema={profileSchema}
               onSubmit={handleSaveProfile}
@@ -907,6 +961,10 @@ function ProfilePage() {
                   {status && <p className="input-error-caption" role="alert">{String(status)}</p>}
                   <label htmlFor="edit-name-input">Name<Field id="edit-name-input" name="name" type="text" className={touched.name && errors.name ? 'has-error' : ''} /></label>
                   <ErrorMessage name="name" component="span" className="input-error-caption" />
+                  <label htmlFor="edit-email-input">Email<Field id="edit-email-input" name="email" type="email" className={touched.email && errors.email ? 'has-error' : ''} /></label>
+                  <ErrorMessage name="email" component="span" className="input-error-caption" />
+                  <label htmlFor="edit-avatar-input">Avatar URL<Field id="edit-avatar-input" name="avatar" type="url" className={touched.avatar && errors.avatar ? 'has-error' : ''} /></label>
+                  <ErrorMessage name="avatar" component="span" className="input-error-caption" />
                   <label htmlFor="edit-phone-input">Phone<Field id="edit-phone-input" name="phone" type="tel" placeholder="+380" className={touched.phone && errors.phone ? 'has-error' : ''} /></label>
                   <ErrorMessage name="phone" component="span" className="input-error-caption" />
                   <div className="profile-edit-actions">
@@ -945,7 +1003,7 @@ function ProfilePage() {
             </div>
           ) : (
             <div className="profile-empty-state">
-              <p>Oops, looks like there aren&apos;t any furries on our adorable page yet. Do not worry! View your pets on the &quot;find your favorite pet&quot; page and add them to your favorites.</p>
+              <p>Oops,<strong> looks like there aren&apos;t any furries</strong> on our adorable page yet. Do not worry! View your pets on the &quot;find your favorite pet&quot; page and add them to your favorites.</p>
             </div>
           )}
         </section>
