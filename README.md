@@ -8,6 +8,7 @@ The project is being updated to match the design and all assignment requirements
 
 - Repository: https://github.com/Idziamko/petlove
 - Website: https://idziamko.github.io/petlove/
+- Vercel: https://petlove-beryl.vercel.app/
 - Design: https://www.figma.com/design/puMNfZVg4YI8UZoJ1QiLLi/Petlove
 - API documentation: https://petlove.b.goit.study/api-docs/
 
@@ -39,4 +40,4 @@ The application uses the Petlove API for authentication, news, pet listings, par
 
 ## Deployment
 
-Changes pushed to main are built and deployed to GitHub Pages. The workflow sets the project base path and includes a fallback page for direct route links.
+Changes pushed to main are built and deployed to GitHub Pages. The connected Vercel project also deploys the same Vite build to the Vercel URL above. The GitHub Pages workflow sets the project base path and includes a fallback page for direct route links.
