@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { newsApi, getApiErrorMessage, type NewsItem } from './api';
 import Icon from './Icon';
 import Pagination from './Pagination';
+import Title from './Title';
 import './news.css';
 
 export default function NewsPage({ header }: { header: ReactNode }) {
@@ -35,7 +36,7 @@ export default function NewsPage({ header }: { header: ReactNode }) {
       {header}
       <main className="news-content">
         <div className="news-heading">
-          <h1>News</h1>
+          <Title>News</Title>
           <form className="news-search" onSubmit={(event) => { event.preventDefault(); setQuery({ keyword: search.trim(), page: 1 }); }}>
             <label htmlFor="news-search" className="sr-only">Search news</label>
             <input id="news-search" type="search" placeholder="Search" value={search} onChange={(event) => setSearch(event.target.value)} />

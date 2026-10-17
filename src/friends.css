@@ -1,0 +1,36 @@
+.layout-page-container.friends-page { max-width: 768px; padding: 28px 20px 80px; gap: 0; }
+.friends-page > .pet-header { min-height: 32px; }
+.friends-content { margin-top: 54px; }
+.friends-content > .page-title { margin-bottom: 40px; }
+.friend-list { display: grid; grid-template-columns: minmax(0,1fr); gap: 20px; }
+.friend-card { position: relative; min-width: 0; height: 184px; border-radius: 15px; background: white; padding: 40px 20px 40px 114px; }
+.friend-logo { position: absolute; top: 40px; left: 20px; width: 80px; height: 80px; border-radius: 50%; }
+.friend-logo img { width: 100%; height: 100%; border-radius: inherit; object-fit: contain; }
+.friend-title { font-size: 16px; line-height: 20px; font-weight: 700; letter-spacing: -.64px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.friend-hours { position: absolute; top: 12px; right: 12px; z-index: 1; font-size: 12px; line-height: 16px; font-weight: 500; letter-spacing: -.24px; }
+.friend-hours { padding: 8px; background: #fff4df; color: #f6b83d; border-radius: 30px; }
+.friend-contacts { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; font-size: 14px; line-height: 18px; letter-spacing: -.28px; }
+.friend-contacts > div { display: flex; gap: 2px; min-width: 0; }
+.friend-contacts dt { color: rgb(38 38 38 / 50%); flex-shrink: 0; }
+.friend-contacts dd { min-width: 0; }
+.friend-contacts dd > a, .friend-contacts dd > span { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.friend-card a:hover { color: #f6b83d; }
+@media (min-width: 768px) {
+  .layout-page-container.friends-page { padding: 32px 32px 80px; }
+  .friends-page > .pet-header { height: 50px; }
+  .friends-content { margin-top: 85px; }
+  .friends-content > .page-title { margin-bottom: 44px; }
+  .friend-list { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .friend-card { height: 196px; padding-left: 126px; }
+  .friend-logo { width: 90px; height: 90px; }
+  .friend-title { font-size: 20px; line-height: 26px; letter-spacing: -.8px; }
+  .friend-hours { font-size: 14px; line-height: 18px; letter-spacing: -.28px; }
+  .friend-contacts { margin-top: 20px; }
+}
+@media (min-width: 1280px) {
+  .layout-page-container.friends-page { max-width: 1280px; padding-inline: 64px; }
+  .friends-content { margin-top: 96px; }
+  .friends-content > .page-title { margin-bottom: 60px; }
+  .friend-list { grid-template-columns: repeat(3,minmax(0,1fr)); gap: 28px 20px; }
+  .friend-card { padding-left: 130px; }
+}

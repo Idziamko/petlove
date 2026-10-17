@@ -1,0 +1,2 @@
+.page-title { font-size: 28px; line-height: 28px; font-weight: 700; letter-spacing: -.84px; }
+@media (min-width: 768px) { .page-title { font-size: 54px; line-height: 54px; letter-spacing: -1.62px; } }

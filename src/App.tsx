@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import {
   Routes,
   Route,
@@ -13,16 +13,17 @@ import * as Yup from 'yup';
 import HomePage from './HomePage';
 import NotFoundPage from './NotFoundPage';
 import NewsPage from './NewsPage';
+import FriendsPage from './FriendsPage';
+import Title from './Title';
 import NoticeFilters, { type NoticeFiltersValue } from './NoticeFilters';
 import Pagination from './Pagination';
 import Icon from './Icon';
 import PetBlock from './PetBlock';
 import { AppStoreProvider, useAppStore } from './store';
-import { petNoticeFromApi, shelterFriendFromApi, userProfileFromApi, type PetNotice, type ShelterFriend } from './models';
+import { petNoticeFromApi, userProfileFromApi, type PetNotice } from './models';
 import {
   authApi,
   citiesApi,
-  friendsApi,
   getApiErrorMessage,
   noticesApi,
   usersApi,
@@ -136,9 +137,8 @@ function HeaderBar({ variant = 'standard' }: HeaderBarProps) {
           aria-label={menuOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={menuOpen}
         >
-          <span className="menu-bar" />
-          <span className="menu-bar" />
-          <span className="menu-bar" />
+          <Icon name="menu-mobile" className="menu-icon-mobile" />
+          <Icon name="menu-tablet" className="menu-icon-tablet" />
         </button>
       </div>
       {menuOpen && (
@@ -614,7 +614,7 @@ function NoticesPage() {
       <HeaderBar />
 
       <main className="content-readable-area">
-        <h1 className="page-headline-title">Find your favorite pet</h1>
+        <Title className="page-headline-title">Find your favorite pet</Title>
         <NoticeFilters value={filters} onChange={next => { setFilters(next); setPage(1); }} />
         {isLoading ? (
           <div className="state-empty-box" role="status">
@@ -813,169 +813,6 @@ function NoticesPage() {
                 <Link to="/register" className="btn-auth-outline" onClick={() => setAuthPromptOpen(false)}>REGISTRATION</Link>
               </div>
             </div>
-          </div>
-        )}
-      </main>
-    </div>
-  );
-}
-function FriendsPage() {
-  const [partnerQuery, setPartnerQuery] = useState('');
-  const [friends, setFriends] = useState<ShelterFriend[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [loadError, setLoadError] = useState<string | null>(null);
-
-  React.useEffect(() => {
-    let isActive = true;
-    friendsApi.list()
-      .then((response) => {
-        if (isActive) setFriends(response.map(shelterFriendFromApi));
-      })
-      .catch((error) => {
-        if (isActive) setLoadError(getApiErrorMessage(error, 'Unable to load our partners right now.'));
-      })
-      .finally(() => {
-        if (isActive) setIsLoading(false);
-      });
-
-    return () => {
-      isActive = false;
-    };
-  }, []);
-
-  const filteredFriends = useMemo(() => {
-    return friends.filter((friend) => {
-      return (
-        friend.name.toLowerCase().includes(partnerQuery.toLowerCase()) ||
-        friend.address.toLowerCase().includes(partnerQuery.toLowerCase())
-      );
-    });
-  }, [friends, partnerQuery]);
-
-  return (
-    <div className="layout-page-container standard-page-layout">
-      <HeaderBar />
-
-      <main className="content-readable-area">
-        <header className="page-header-row">
-          <div>
-            <h1 className="page-headline-title">Our friends</h1>
-            <p className="page-subline-text">
-              Trusted shelters, veterinary hospitals, and voluntary rescue networks.
-            </p>
-          </div>
-
-          <div className="search-pill-field">
-            <span className="search-magnifier-symbol">⌕</span>
-            <input
-              type="text"
-              placeholder="Search shelter or city..."
-              value={partnerQuery}
-              onChange={(e) => setPartnerQuery(e.target.value)}
-              className="search-inner-input"
-              aria-label="Search friends and shelters"
-            />
-            {partnerQuery && (
-              <button
-                type="button"
-                className="search-reset-cross"
-                onClick={() => setPartnerQuery('')}
-                aria-label="Clear partner search"
-              >
-                ✕
-              </button>
-            )}
-          </div>
-        </header>
-
-        {isLoading ? (
-          <div className="state-empty-box" role="status">
-            <span className="state-empty-symbol">⏳</span>
-            <h2 className="state-empty-title">Loading partners…</h2>
-          </div>
-        ) : loadError ? (
-          <div className="state-empty-box" role="alert">
-            <span className="state-empty-symbol">⚠️</span>
-            <h2 className="state-empty-title">Unable to load partners</h2>
-            <p className="state-empty-desc">{loadError}</p>
-            <button type="button" onClick={() => window.location.reload()} className="btn-primary-filled">Try again</button>
-          </div>
-        ) : filteredFriends.length > 0 ? (
-          <div className="friends-grid-layout">
-            {filteredFriends.map((partner) => (
-              <article key={partner.id} className="partner-card">
-                <div className="partner-top-header">
-                  <img src={partner.imageUrl} alt={partner.name} className="partner-avatar-img" />
-                  <div>
-                    <h2 className="partner-name-heading">{partner.name}</h2>
-                    <span className="partner-status-tag">{partner.status}</span>
-                  </div>
-                </div>
-
-                <div className="partner-info-list">
-                  <div className="partner-info-item">
-                    <span className="info-key">Hours:</span>
-                    <span className="info-val">{partner.time}</span>
-                  </div>
-                  <div className="partner-info-item">
-                    <span className="info-key">Address:</span>
-                    {partner.addressUrl ? (
-                      <a href={partner.addressUrl} target="_blank" rel="noreferrer" className="info-link">
-                        {partner.address}
-                      </a>
-                    ) : (
-                      <span className="info-val">{partner.address}</span>
-                    )}
-                  </div>
-                  <div className="partner-info-item">
-                    <span className="info-key">Email:</span>
-                    {partner.email ? (
-                      <a href={`mailto:${partner.email}`} className="info-link">
-                        {partner.email}
-                      </a>
-                    ) : (
-                      <span className="info-val">Not provided</span>
-                    )}
-                  </div>
-                  <div className="partner-info-item">
-                    <span className="info-key">Phone:</span>
-                    {partner.phone ? (
-                      <a href={`tel:${partner.phone}`} className="info-link">
-                        {partner.phone}
-                      </a>
-                    ) : (
-                      <span className="info-val">Not provided</span>
-                    )}
-                  </div>
-                </div>
-
-                <div className="partner-card-footer">
-                  <a
-                    href={partner.url || partner.addressUrl || '#'}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="btn-auth-outline full-width text-center"
-                  >
-                    Visit official portal ↗
-                  </a>
-                </div>
-              </article>
-            ))}
-          </div>
-        ) : (
-          <div className="state-empty-box">
-            <span className="state-empty-symbol">🏥</span>
-            <h2 className="state-empty-title">No partner organizations found</h2>
-            <p className="state-empty-desc">
-              We couldn&apos;t find any verified partners matching &ldquo;{partnerQuery}&rdquo;.
-            </p>
-            <button
-              type="button"
-              onClick={() => setPartnerQuery('')}
-              className="btn-primary-filled"
-            >
-              Show all partners
-            </button>
           </div>
         )}
       </main>
@@ -1434,7 +1271,7 @@ export default function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/news" element={<NewsPage header={<HeaderBar />} />} />
         <Route path="/notices" element={<NoticesPage />} />
-        <Route path="/friends" element={<FriendsPage />} />
+        <Route path="/friends" element={<FriendsPage header={<HeaderBar />} />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/add-pet" element={<AddPetPage />} />
         <Route path="*" element={<NotFoundPage header={<HeaderBar />} />} />

@@ -131,3 +131,14 @@
     display: none;
   }
 }
+
+.mobile-hamburger-btn { padding: 0; }
+.menu-icon-mobile { display: block; width: 32px; height: 32px; }
+.menu-icon-tablet { display: none; width: 36px; height: 36px; }
+.home-hero .mobile-hamburger-btn { color: white; }
+@media (min-width: 768px) {
+  .desktop-auth-actions { display: flex; margin-left: auto; }
+  .menu-icon-mobile { display: none; }
+  .menu-icon-tablet { display: block; }
+  .header-standard-mode .site-brand { font-weight: 700; }
+}
