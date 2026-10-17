@@ -919,7 +919,13 @@ function ProfilePage() {
     { setSubmitting, setStatus }: { setSubmitting: (isSubmitting: boolean) => void; setStatus: (status?: unknown) => void },
   ) => {
     try {
-      const updatedUser = await usersApi.edit(values);
+      const payload = {
+        name: values.name,
+        email: values.email,
+        phone: values.phone,
+        ...(values.avatar.trim() ? { avatar: values.avatar.trim() } : {}),
+      };
+      const updatedUser = await usersApi.edit(payload);
       setCurrentUser(userProfileFromApi(updatedUser));
       setIsEditing(false);
     } catch (error) {
@@ -1012,13 +1018,13 @@ function ProfilePage() {
               validationSchema={profileSchema}
               onSubmit={handleSaveProfile}
             >
-              {({ isSubmitting, errors, touched, status }) => (
+              {({ isSubmitting, errors, touched, status, values }) => (
                 <Form className="profile-edit-panel" noValidate>
                   <h2 id="profile-edit-title">Edit information</h2>
                   {status && <p className="input-error-caption" role="alert">{String(status)}</p>}
                     <div className="profile-edit-photo-block">
                       <div className="profile-edit-photo-preview">
-                        {currentUser.avatar ? <img src={currentUser.avatar} alt="" /> : <img src={`${import.meta.env.BASE_URL}icons/profile-user.svg`} alt="" />}
+                        {values.avatar ? <img src={values.avatar} alt="" /> : <img src={`${import.meta.env.BASE_URL}icons/profile-user.svg`} alt="" />}
                       </div>
                       <div className="profile-edit-photo-controls">
                         <Field
