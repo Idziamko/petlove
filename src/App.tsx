@@ -34,6 +34,13 @@ import {
 } from './api';
 const EMAIL_PATTERN = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
 
+function focusUrlField(id: string) {
+  const input = document.getElementById(id);
+  if (!(input instanceof HTMLInputElement)) return;
+  input.focus();
+  input.select();
+}
+
 function useDialogA11y(open: boolean, dialogRef: React.RefObject<HTMLElement | null>, onClose: () => void) {
   const closeRef = React.useRef(onClose);
   const previousFocusRef = React.useRef<HTMLElement | null>(null);
@@ -1042,7 +1049,13 @@ function ProfilePage() {
                           placeholder="Enter URL"
                           className={`profile-edit-url-input ${touched.avatar && errors.avatar ? 'has-error' : ''}`}
                         />
-                        <button type="button" className="profile-edit-upload-button" onClick={() => document.getElementById('edit-avatar-input')?.focus()}>
+                        <button
+                          type="button"
+                          className="profile-edit-upload-button"
+                          aria-label="Paste an avatar image URL"
+                          title="Paste a direct image URL"
+                          onClick={() => focusUrlField('edit-avatar-input')}
+                        >
                           Upload photo <img src={`${import.meta.env.BASE_URL}icons/upload-cloud.svg`} alt="" />
                         </button>
                       </div>
@@ -1172,7 +1185,13 @@ function AddPetPage() {
                         className={touched.imageUrl && errors.imageUrl ? 'has-error' : ''}
                       />
                     </label>
-                    <button type="button" className="add-pet-upload-button" onClick={() => document.getElementById('pet-image-input')?.focus()}>
+                    <button
+                      type="button"
+                      className="add-pet-upload-button"
+                      aria-label="Paste a pet image URL"
+                      title="Paste a direct image URL"
+                      onClick={() => focusUrlField('pet-image-input')}
+                    >
                       Upload photo <img src={`${import.meta.env.BASE_URL}icons/upload-cloud.svg`} alt="" />
                     </button>
                   </div>
