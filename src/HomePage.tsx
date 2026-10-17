@@ -16,7 +16,8 @@ export default function HomePage({ header }: { header: ReactNode }) {
       </section>
       <div className="home-photo">
         <img
-          src={`${import.meta.env.BASE_URL}images/home.webp`}
+          src={`${import.meta.env.BASE_URL}images/home-1x.webp`}
+          srcSet={`${import.meta.env.BASE_URL}images/home-1x.webp 1x, ${import.meta.env.BASE_URL}images/home-2x.webp 2x`}
           alt="A woman holding her dog outdoors"
         />
       </div>

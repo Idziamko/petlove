@@ -12,7 +12,7 @@ A pet adoption website with pet listings, animal news, partner organisations and
 
 ## Technologies
 
-React, TypeScript, Vite, React Router, Axios, Formik and Yup. The interface uses CSS and Manrope.
+React, TypeScript, Vite, React Router, Redux Toolkit, Axios, Formik and Yup. The interface uses CSS and Manrope. Icons are served from one SVG sprite and the large images are exported as WebP in 1x and 2x sizes for retina screens.
 
 ## Assignment
 
@@ -40,7 +40,7 @@ npm run preview
 
 Home, News, Find pet, Our friends, Login, Registration, Profile and Add pet.
 
-The application uses the Petlove API for authentication, news, pet listings, partner details and user data. Forms use Formik and Yup. The layout supports mobile, tablet and desktop screens.
+The application uses the Petlove API for authentication, news, pet listings, partner details and user data. The signed-in user, favorites, viewed notices and pets are kept in a Redux store that is cleared on logout together with the saved token.
 
 ## Deployment
 

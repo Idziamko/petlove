@@ -30,5 +30,5 @@
 @media (min-width: 768px) { .not-found-number { width: 640px; } }
 @media (min-width: 1280px) {
   .not-found-number { width: 650px; }
-  .not-found-page > .pet-header { margin-inline: 32px; }
+  .not-found-page > .pet-header { width: auto; margin-inline: 32px; }
 }

@@ -1,11 +1,11 @@
 .auth-page {
   max-width: 768px;
-  padding: 20px;
-  gap: 28px;
+  padding: 28px 20px 20px;
+  gap: 20px;
 }
 
 .auth-page .pet-header {
-  padding: 4px 0;
+  padding: 0;
 }
 
 .auth-page .auth-split-grid {
@@ -66,6 +66,11 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
+}
+
+.register-page .auth-form-card {
+  padding-top: 27px;
+  padding-bottom: 27px;
 }
 
 .auth-page .auth-card-heading {
@@ -169,7 +174,7 @@
 
   .auth-page .pet-header {
     height: 50px;
-    padding: 0 32px;
+    padding: 0;
   }
 
   .auth-page .auth-split-grid {
@@ -229,6 +234,7 @@
     font-size: 12px;
     line-height: 14px;
     letter-spacing: -0.24px;
+    font-weight: 500;
     color: rgb(38 38 38 / 80%);
   }
 
@@ -237,6 +243,13 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: 8px;
+    white-space: nowrap;
+  }
+
+  .pet-block-details p {
+    display: flex;
+    gap: 4px;
+    color: #262626;
   }
 
   .pet-block-details strong {
@@ -254,6 +267,11 @@
     padding: 71px max(40px, calc((100% - 424px) / 2));
     border-radius: 60px;
     gap: 32px;
+  }
+
+  .register-page .auth-form-card {
+    padding-top: 30px;
+    padding-bottom: 30px;
   }
 
   .auth-page .auth-card-heading {
@@ -318,6 +336,10 @@
     max-width: 1280px;
   }
 
+  .auth-page .pet-header {
+    padding: 0 32px;
+  }
+
   .auth-page .auth-split-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -374,5 +396,11 @@
   .register-page .auth-form-card {
     padding-top: 77px;
     padding-bottom: 77px;
+  }
+}
+
+@media (max-width: 767px) {
+  .register-page .auth-card-heading {
+    margin-bottom: -4px;
   }
 }
