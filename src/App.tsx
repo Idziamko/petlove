@@ -11,6 +11,7 @@ import {
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import HomePage from './HomePage';
+import NotFoundPage from './NotFoundPage';
 import NewsPage from './NewsPage';
 import NoticeFilters, { type NoticeFiltersValue } from './NoticeFilters';
 import Pagination from './Pagination';
@@ -1436,7 +1437,7 @@ export default function App() {
         <Route path="/friends" element={<FriendsPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/add-pet" element={<AddPetPage />} />
-        <Route path="*" element={<Navigate to="/home" replace />} />
+        <Route path="*" element={<NotFoundPage header={<HeaderBar />} />} />
       </Routes>
     </AppStoreProvider>
   );

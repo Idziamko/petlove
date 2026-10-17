@@ -95,3 +95,4 @@
   .notice-select .pet-select__control { height: 42px; }
   .notice-sort-row { gap: 10px; padding-top: 19px; }
 }
+@media (min-width: 1280px) { .notices-page > .pet-header { margin-inline: 32px; } }
