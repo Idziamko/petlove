@@ -8,3 +8,7 @@ dist/
 /public/images/login.png
 /public/images/register.png
 /review.local.html
+.env
+.env.*
+!.env.example
+/AGENTS.md

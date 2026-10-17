@@ -8,7 +8,8 @@
     "test": "node --experimental-strip-types --test tests/*.test.mjs",
     "typecheck": "tsc --noEmit --noUnusedLocals --noUnusedParameters",
     "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "figma:fetch": "node scripts/figma-fetch.mjs"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.3",
