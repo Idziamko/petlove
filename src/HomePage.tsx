@@ -18,7 +18,6 @@ export default function HomePage({ header }: { header: ReactNode }) {
         <img
           src={`${import.meta.env.BASE_URL}images/home.webp`}
           alt="A woman holding her dog outdoors"
-          fetchPriority="high"
         />
       </div>
     </main>
