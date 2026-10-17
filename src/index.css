@@ -70,6 +70,7 @@ html,
 body {
   width: 100%;
   min-height: 100vh;
+  overflow-x: hidden;
   font-family: var(--font-family-base);
   background-color: var(--color-bg-subtle);
   color: var(--color-dark);
@@ -114,7 +115,7 @@ img {
 }
 
 .layout-page-container {
-  width: 100%;
+  width: 100vw;
   max-width: 1280px;
   margin: 0 auto;
   padding: 20px;
