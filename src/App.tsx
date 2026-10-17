@@ -1132,7 +1132,7 @@ function AddPetPage() {
               }
             }}
           >
-            {({ isSubmitting, errors, touched, status }) => (
+            {({ isSubmitting, errors, touched, status, values }) => (
               <Form className="add-pet-form" noValidate>
                 {status && (
                   <div className="form-message form-message-error" role="alert">
@@ -1160,7 +1160,7 @@ function AddPetPage() {
 
                 <div className="add-pet-photo-row">
                   <div className="add-pet-photo-preview" aria-hidden="true">
-                    <img src={`${import.meta.env.BASE_URL}icons/paw.svg`} alt="" />
+                    {values.imageUrl ? <img src={values.imageUrl} alt="" /> : <img src={`${import.meta.env.BASE_URL}icons/paw.svg`} alt="" />}
                   </div>
                   <div className="add-pet-photo-controls">
                     <label htmlFor="pet-image-input" className="add-pet-image-input">
