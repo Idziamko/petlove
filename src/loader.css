@@ -2,7 +2,8 @@
 .loading-photo { position: absolute; top: 0; left: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; }
 .loading-shade { position: absolute; inset: 0; background: rgb(0 0 0 / 30%); }
 .loading-indicator { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 292px; height: 292px; display: grid; place-items: center; }
-.loading-indicator picture { position: absolute; inset: 0; display: grid; place-items: center; }
+.loading-rings { position: absolute; inset: 0; display: grid; place-items: center; }
+.loading-ring-mobile { display: none; }
 .loading-ring { position: absolute; width: 100%; height: 100%; max-width: none; transform: rotate(-175.29deg); animation: loading-ring-spin 1.4s linear infinite; transform-origin: center; }
 .loading-indicator span { color: white; font-size: 50px; line-height: 50px; font-weight: 700; letter-spacing: -2px; }
 @media (min-width: 768px) {
@@ -13,6 +14,8 @@
   .loading-photo { left: -3.22%; width: 111.11%; object-fit: fill; }
 }
 @media (max-width: 767px) {
+  .loading-ring-desktop { display: none; }
+  .loading-ring-mobile { display: block; }
   .loading-indicator { left: calc(50% + .5px); }
   .loading-ring { width: 272px; height: 272px; transform: none; animation-name: loading-ring-spin-mobile; }
 }

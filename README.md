@@ -2,8 +2,6 @@
 
 A pet adoption website with pet listings, animal news, partner organisations and a personal profile.
 
-The project is being updated to match the design and all assignment requirements.
-
 ## Links
 
 - Repository: https://github.com/Idziamko/petlove
@@ -15,6 +13,12 @@ The project is being updated to match the design and all assignment requirements
 ## Technologies
 
 React, TypeScript, Vite, React Router, Axios, Formik and Yup. The interface uses CSS and Manrope.
+
+## Assignment
+
+Built from the Petlove technical assignment and the general project acceptance criteria. Public pages include news search, server pagination, pet filters and partner contacts. Signed-in users can edit their profile, manage their pets, save favorite notices and view recently opened notices.
+
+Forms use Formik and Yup. The responsive layout targets mobile screens from 320 px, tablet screens from 768 px and desktop screens from 1280 px. Profile and pet photos use direct image URLs supported by the API.
 
 ## Local setup
 

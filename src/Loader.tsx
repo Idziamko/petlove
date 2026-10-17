@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Icon from './Icon';
 import './loader.css';
 
 export default function Loader({ progress }: { progress?: number }) {
@@ -13,7 +14,7 @@ export default function Loader({ progress }: { progress?: number }) {
     <img className="loading-photo" src={`${import.meta.env.BASE_URL}images/loading.webp`} alt="" />
     <div className="loading-shade" />
     <div className="loading-indicator">
-      <picture><source media="(max-width: 767px)" srcSet={`${import.meta.env.BASE_URL}icons/loading-ring-mobile.svg`} /><img className="loading-ring" src={`${import.meta.env.BASE_URL}icons/loading-ring.svg`} alt="" /></picture>
+      <div className="loading-rings"><Icon name="loading-ring-mobile" className="loading-ring loading-ring-mobile" /><Icon name="loading-ring" className="loading-ring loading-ring-desktop" /></div>
       <span>{percentage}%</span>
     </div>
   </div>;

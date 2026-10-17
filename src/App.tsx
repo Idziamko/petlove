@@ -138,7 +138,7 @@ function HeaderBar({ variant = 'standard' }: HeaderBarProps) {
     <header className={`pet-header ${isHero ? 'header-hero-mode' : 'header-standard-mode'}`}>
       <div className="header-inner">
         <Link to="/home" className="site-brand" aria-label="Petlove homepage">
-          <span>petl</span><img src={`${import.meta.env.BASE_URL}icons/heart-circle.svg`} alt="" className="brand-heart" /><span>ve</span>
+          <span>petl</span><Icon name="heart-circle" width="23" height="23" className="brand-heart" /><span>ve</span>
         </Link>
         <nav className="desktop-nav-pills" aria-label="Primary navigation">
           <NavLink
@@ -167,7 +167,7 @@ function HeaderBar({ variant = 'standard' }: HeaderBarProps) {
                 {currentUser.avatar ? (
                   <img src={currentUser.avatar} alt={currentUser.name} className="user-chip-avatar" />
                 ) : (
-                  <img src={`${import.meta.env.BASE_URL}icons/profile-user.svg`} alt="" className="user-chip-avatar" />
+                  <Icon name="profile-user" width="50" height="50" className="user-chip-avatar" />
                 )}
                 <span className="user-chip-name">{currentUser.name.split(' ')[0]}</span>
               </Link>
@@ -196,7 +196,7 @@ function HeaderBar({ variant = 'standard' }: HeaderBarProps) {
             {currentUser.avatar ? (
               <img src={currentUser.avatar} alt="" className="mobile-user-avatar" />
             ) : (
-              <img src={`${import.meta.env.BASE_URL}icons/profile-user.svg`} alt="" className="mobile-user-avatar" />
+              <Icon name="profile-user" width="50" height="50" className="mobile-user-avatar" />
             )}
           </Link>
         )}
@@ -229,11 +229,11 @@ function HeaderBar({ variant = 'standard' }: HeaderBarProps) {
               onClick={() => setLogoutOpen(false)}
               aria-label="Close logout confirmation"
             >
-              <img src={`${import.meta.env.BASE_URL}icons/modal-close.svg`} alt="" />
+              <Icon name="modal-close" width="24" height="24" />
             </button>
             <div className="logout-modal-content">
               <div className="logout-modal-icon">
-                <img src={`${import.meta.env.BASE_URL}icons/modal-emoji-circle.svg`} alt="" />
+                <Icon name="modal-emoji-circle" width="80" height="80" />
                 <span aria-hidden="true">🐈</span>
               </div>
               <div className="logout-modal-copy">
@@ -346,7 +346,7 @@ function LoginPage() {
                       onClick={() => setShowPassword(!showPassword)}
                       aria-label={showPassword ? 'Hide password' : 'Show password'}
                     >
-                      <img src={`${import.meta.env.BASE_URL}icons/${showPassword ? 'eye' : 'eye-off'}.svg`} alt="" />
+                      <Icon name={showPassword ? 'eye' : 'eye-off'} width="22" height="22" />
                     </button>
                   </div>
                   <ErrorMessage name="password" component="div" className="input-error-caption" />
@@ -494,7 +494,7 @@ function RegisterPage() {
                       onClick={() => setShowPassword(!showPassword)}
                       aria-label={showPassword ? 'Hide password' : 'Show password'}
                     >
-                      <img src={`${import.meta.env.BASE_URL}icons/${showPassword ? 'eye' : 'eye-off'}.svg`} alt="" />
+                      <Icon name={showPassword ? 'eye' : 'eye-off'} width="22" height="22" />
                     </button>
                   </div>
                   <ErrorMessage name="password" component="div" className="input-error-caption" />
@@ -729,7 +729,7 @@ function NoticesPage() {
                 onClick={() => setFocusedPet(null)}
                 aria-label="Close modal dialog"
               >
-                <img src={`${import.meta.env.BASE_URL}icons/modal-close.svg`} alt="" />
+                <Icon name="modal-close" width="24" height="24" />
               </button>
 
               <div className="modal-content-split">
@@ -813,11 +813,11 @@ function NoticesPage() {
                 onClick={() => setAuthPromptOpen(false)}
                 aria-label="Close authentication prompt"
               >
-                <img src={`${import.meta.env.BASE_URL}icons/modal-close.svg`} alt="" />
+                <Icon name="modal-close" width="24" height="24" />
               </button>
               <div className="attention-modal-content">
                 <div className="attention-modal-icon">
-                  <img src={`${import.meta.env.BASE_URL}icons/modal-emoji-circle.svg`} alt="" />
+                  <Icon name="modal-emoji-circle" width="80" height="80" />
                   <span aria-hidden="true">🐶</span>
                 </div>
                 <div className="attention-modal-copy">
@@ -850,11 +850,11 @@ function NoticesPage() {
                 onClick={() => setCongratsOpen(false)}
                 aria-label="Close congratulations"
               >
-                <img src={`${import.meta.env.BASE_URL}icons/modal-close.svg`} alt="" />
+                <Icon name="modal-close" width="24" height="24" />
               </button>
               <div className="congrats-modal-content">
                 <div className="attention-modal-icon">
-                  <img src={`${import.meta.env.BASE_URL}icons/modal-emoji-circle.svg`} alt="" />
+                  <Icon name="modal-emoji-circle" width="80" height="80" />
                   <span aria-hidden="true">🐈</span>
                 </div>
                 <div className="congrats-modal-copy">
@@ -884,7 +884,7 @@ function ProfileNoticeCard({ notice, removable, onRemove }: { notice: PetNotice;
       <div className="profile-notice-content">
         <div className="profile-notice-heading">
           <h3>{notice.title}</h3>
-          <span className="profile-notice-rating"><img src={`${import.meta.env.BASE_URL}icons/star.svg`} alt="" />{notice.rating}</span>
+          <span className="profile-notice-rating"><Icon name="star" width="16" height="16" />{notice.rating}</span>
         </div>
         <div className="profile-notice-specs">
           <span><small>Name</small>{notice.name}</span>
@@ -898,7 +898,7 @@ function ProfileNoticeCard({ notice, removable, onRemove }: { notice: PetNotice;
           <Link to="/notices" className="profile-notice-learn">Learn more</Link>
           {removable && onRemove && (
             <button type="button" className="profile-notice-remove" onClick={onRemove} aria-label={`Remove ${notice.name} from favorites`}>
-              <img src={`${import.meta.env.BASE_URL}icons/trash.svg`} alt="" />
+              <Icon name="trash" width="18" height="18" />
             </button>
           )}
         </div>
@@ -936,7 +936,7 @@ function ProfilePage() {
       const payload = {
         name: values.name,
         email: values.email,
-        phone: values.phone,
+        ...(values.phone.trim() ? { phone: values.phone.trim() } : {}),
         ...(values.avatar.trim() ? { avatar: values.avatar.trim() } : {}),
       };
       const updatedUser = await usersApi.edit(payload);
@@ -958,15 +958,15 @@ function ProfilePage() {
       <HeaderBar />
       <main className="profile-layout" aria-label="Profile">
         <aside className={`profile-side-card${userPets.length ? '' : ' profile-side-card-empty'}`} data-pet-count={Math.min(userPets.length, 2)} aria-label="User Profile Details">
-          <div className="profile-role-badge">User <img src={`${import.meta.env.BASE_URL}icons/user-badge.svg`} alt="" /></div>
+          <div className="profile-role-badge">User <Icon name="user-badge" width="18" height="18" /></div>
           <button type="button" className="profile-upload-button" onClick={() => setIsEditing(true)}>
             <span className="profile-upload-avatar">
-              {currentUser.avatar ? <img className="profile-avatar-photo" src={currentUser.avatar} alt={currentUser.name} /> : <img src={`${import.meta.env.BASE_URL}icons/user-02.svg`} alt="" />}
+              {currentUser.avatar ? <img className="profile-avatar-photo" src={currentUser.avatar} alt={currentUser.name} /> : <Icon name="user-02" width="50" height="50" />}
             </span>
             <span>Upload photo</span>
           </button>
           <button type="button" className="profile-edit-button" onClick={() => setIsEditing(true)} aria-label="Edit profile">
-            <img src={`${import.meta.env.BASE_URL}icons/edit.svg`} alt="" />
+            <Icon name="edit" width="18" height="18" />
           </button>
 
           <section className="profile-information">
@@ -979,15 +979,15 @@ function ProfilePage() {
           </section>
 
           <section className="profile-my-pets">
-            <div className="profile-section-heading"><h2>My pets</h2><Link to="/add-pet">Add pet <img src={`${import.meta.env.BASE_URL}icons/plus.svg`} alt="" /></Link></div>
+            <div className="profile-section-heading"><h2>My pets</h2><Link to="/add-pet">Add pet <Icon name="plus" width="18" height="18" /></Link></div>
             {userPets.map((pet) => (
               <article key={pet.id} className="profile-user-pet-card">
                 <img src={pet.imageUrl} alt={pet.name} className="profile-user-pet-image" />
                 <div className="profile-user-pet-copy">
-                  <strong>{pet.name}</strong>
+                  <strong>{pet.title}</strong>
                   <div><span><small>Name</small>{pet.name}</span><span><small>Birthday</small>{profileDate(pet.birthday)}</span><span><small>Sex</small>{pet.sex}</span><span><small>Species</small>{pet.species}</span></div>
                 </div>
-                <button type="button" className="profile-user-pet-remove" onClick={() => removeUserPet(pet.id)} aria-label={`Remove ${pet.name}`}><img src={`${import.meta.env.BASE_URL}icons/trash.svg`} alt="" /></button>
+                <button type="button" className="profile-user-pet-remove" onClick={() => removeUserPet(pet.id)} aria-label={`Remove ${pet.name}`}><Icon name="trash" width="18" height="18" /></button>
               </article>
             ))}
           </section>
@@ -1021,7 +1021,7 @@ function ProfilePage() {
             onClick={(event) => event.stopPropagation()}
           >
             <button type="button" className="modal-close-button profile-edit-close" onClick={() => setIsEditing(false)} aria-label="Close edit profile">
-              <img src={`${import.meta.env.BASE_URL}icons/modal-close.svg`} alt="" />
+              <Icon name="modal-close" width="24" height="24" />
             </button>
             <Formik
               initialValues={{
@@ -1040,7 +1040,7 @@ function ProfilePage() {
                   {status && <p className="input-error-caption" role="alert">{String(status)}</p>}
                     <div className="profile-edit-photo-block">
                       <div className="profile-edit-photo-preview">
-                        {values.avatar ? <img src={values.avatar} alt="" /> : <img src={`${import.meta.env.BASE_URL}icons/profile-user.svg`} alt="" />}
+                        {values.avatar ? <img src={values.avatar} alt="" /> : <Icon name="profile-user" width="50" height="50" />}
                       </div>
                       <div className="profile-edit-photo-controls">
                         <Field
@@ -1058,7 +1058,7 @@ function ProfilePage() {
                           title="Paste a direct image URL"
                           onClick={() => focusUrlField('edit-avatar-input')}
                         >
-                          Upload photo <img src={`${import.meta.env.BASE_URL}icons/upload-cloud.svg`} alt="" />
+                          Upload photo <Icon name="upload-cloud" width="18" height="18" />
                         </button>
                       </div>
                     </div>
@@ -1158,25 +1158,25 @@ function AddPetPage() {
                 <div className="add-pet-sex" role="radiogroup" aria-label="Pet sex">
                   <label className="add-pet-sex-option add-pet-sex-female">
                     <Field type="radio" name="sex" value="Female" aria-label="Female" />
-                    <img className="add-pet-sex-icon-default" src={`${import.meta.env.BASE_URL}icons/female.svg`} alt="" />
-                    <img className="add-pet-sex-icon-selected" src={`${import.meta.env.BASE_URL}icons/female-selected.svg`} alt="" />
+                    <Icon name="female" width="24" height="24" className="add-pet-sex-icon-default" />
+                    <Icon name="female-selected" width="24" height="24" className="add-pet-sex-icon-selected" />
                   </label>
                   <label className="add-pet-sex-option add-pet-sex-male">
                     <Field type="radio" name="sex" value="Male" aria-label="Male" />
-                    <img className="add-pet-sex-icon-default" src={`${import.meta.env.BASE_URL}icons/male.svg`} alt="" />
-                    <img className="add-pet-sex-icon-selected" src={`${import.meta.env.BASE_URL}icons/male-selected.svg`} alt="" />
+                    <Icon name="male" width="24" height="24" className="add-pet-sex-icon-default" />
+                    <Icon name="male-selected" width="24" height="24" className="add-pet-sex-icon-selected" />
                   </label>
                   <label className="add-pet-sex-option add-pet-sex-multiple">
                     <Field type="radio" name="sex" value="Multiple" aria-label="Multiple" />
-                    <img className="add-pet-sex-icon-default" src={`${import.meta.env.BASE_URL}icons/multiple.svg`} alt="" />
-                    <img className="add-pet-sex-icon-selected" src={`${import.meta.env.BASE_URL}icons/multiple-selected.svg`} alt="" />
+                    <Icon name="multiple" width="17.9993" height="16" className="add-pet-sex-icon-default" />
+                    <Icon name="multiple-selected" width="17.9993" height="16" className="add-pet-sex-icon-selected" />
                   </label>
                 </div>
                 <ErrorMessage name="sex" component="div" className="input-error-caption add-pet-sex-error" />
 
                 <div className="add-pet-photo-row">
                   <div className="add-pet-photo-preview" aria-hidden="true">
-                    {values.imageUrl ? <img src={values.imageUrl} alt="" /> : <img src={`${import.meta.env.BASE_URL}icons/paw.svg`} alt="" />}
+                    {values.imageUrl ? <img src={values.imageUrl} alt="" /> : <Icon name="paw" width="44" height="44" />}
                   </div>
                   <div className="add-pet-photo-controls">
                     <label htmlFor="pet-image-input" className="add-pet-image-input">
@@ -1195,7 +1195,7 @@ function AddPetPage() {
                       title="Paste a direct image URL"
                       onClick={() => focusUrlField('pet-image-input')}
                     >
-                      Upload photo <img src={`${import.meta.env.BASE_URL}icons/upload-cloud.svg`} alt="" />
+                      Upload photo <Icon name="upload-cloud" width="18" height="18" />
                     </button>
                   </div>
                 </div>
@@ -1233,7 +1233,7 @@ function AddPetPage() {
                         placeholder="00.00.0000"
                         className={`text-input-field ${touched.birthday && errors.birthday ? 'has-error' : ''}`}
                       />
-                      <img src={`${import.meta.env.BASE_URL}icons/calendar.svg`} alt="" className="add-pet-calendar-icon" />
+                      <Icon name="calendar" width="20" height="20" className="add-pet-calendar-icon" />
                     </div>
                     <ErrorMessage name="birthday" component="div" className="input-error-caption" />
                   </div>
@@ -1244,7 +1244,7 @@ function AddPetPage() {
                       as="select"
                       name="species"
                       className="filter-select-control w-full"
-                      style={{ backgroundImage: `url(${import.meta.env.BASE_URL}icons/chevron-down.svg)` }}
+                      style={{ backgroundImage: 'none' }}
                     >
                       <option value="" disabled>Type of pet</option>
                       <option value="Dog">Dog</option>
@@ -1262,6 +1262,7 @@ function AddPetPage() {
                       <option value="Spider">Spider</option>
                       <option value="Scorpion">Scorpion</option>
                     </Field>
+                    <Icon name="chevron-down" className="add-pet-species-arrow" width="20" height="20" />
                     <ErrorMessage name="species" component="div" className="input-error-caption" />
                   </div>
                 </div>

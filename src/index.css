@@ -43,7 +43,7 @@
   place-items: center;
 }
 
-.notification-dismiss img {
+.notification-dismiss :is(img, svg) {
   width: 18px;
   height: 18px;
 }
@@ -1536,7 +1536,7 @@ img {
   z-index: 10;
 }
 
-.modal-dismiss-btn img { width: 24px; height: 24px; }
+.modal-dismiss-btn :is(img, svg) { width: 24px; height: 24px; }
 
 .modal-content-split {
   display: grid;
@@ -1718,7 +1718,7 @@ img {
   flex: 0 0 auto;
 }
 
-.attention-modal-icon img { width: 80px; height: 80px; }
+.attention-modal-icon :is(img, svg) { width: 80px; height: 80px; }
 
 .attention-modal-icon span {
   position: absolute;
@@ -1804,7 +1804,7 @@ img {
   flex: 0 0 auto;
 }
 
-.logout-modal-icon img { width: 80px; height: 80px; }
+.logout-modal-icon :is(img, svg) { width: 80px; height: 80px; }
 
 .logout-modal-icon span {
   position: absolute;
@@ -2220,7 +2220,7 @@ img {
   letter-spacing: -.28px;
 }
 
-.profile-role-badge img {
+.profile-role-badge :is(img, svg) {
   width: 18px;
   height: 18px;
 }
@@ -2250,13 +2250,13 @@ img {
   background: #fff4df;
 }
 
-.profile-upload-avatar img {
+.profile-upload-avatar :is(img, svg) {
   width: 50px;
   height: 50px;
   object-fit: cover;
 }
 
-.profile-upload-avatar img.profile-avatar-photo {
+.profile-upload-avatar :is(img, svg).profile-avatar-photo {
   width: 100%;
   height: 100%;
 }
@@ -2272,9 +2272,9 @@ img {
   background: #fff4df;
 }
 
-.profile-edit-button img,
-.profile-user-pet-remove img,
-.profile-notice-remove img {
+.profile-edit-button :is(img, svg),
+.profile-user-pet-remove :is(img, svg),
+.profile-notice-remove :is(img, svg) {
   width: 18px;
   height: 18px;
 }
@@ -2342,7 +2342,7 @@ img {
   letter-spacing: -.48px;
 }
 
-.profile-section-heading a img {
+.profile-section-heading a :is(img, svg) {
   width: 18px;
   height: 18px;
 }
@@ -2531,7 +2531,7 @@ img {
   fill: #f6b83d;
 }
 
-.profile-notice-rating img {
+.profile-notice-rating :is(img, svg) {
   width: 16px;
   height: 16px;
 }
@@ -2641,7 +2641,7 @@ img {
   line-height: 1;
 }
 
-.profile-edit-close img {
+.profile-edit-close :is(img, svg) {
   width: 24px;
   height: 24px;
 }
@@ -2677,7 +2677,7 @@ img {
   background: #fff4df;
 }
 
-.profile-edit-photo-preview img {
+.profile-edit-photo-preview :is(img, svg) {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -2727,7 +2727,7 @@ img {
   letter-spacing: -.28px;
 }
 
-.profile-edit-upload-button img {
+.profile-edit-upload-button :is(img, svg) {
   width: 18px;
   height: 18px;
 }
@@ -2806,7 +2806,7 @@ img {
   .profile-page {
     max-width: 375px;
     padding: 24px 20px 40px;
-    gap: 26px;
+    gap: 18px;
   }
 
   .profile-layout { display: block; }
@@ -2820,7 +2820,7 @@ img {
   .profile-role-badge { top: 18px; left: 20px; }
   .profile-upload-button { top: 54px; left: 121px; width: 94px; font-size: 12px; line-height: 16px; }
   .profile-upload-avatar { width: 94px; height: 94px; }
-  .profile-upload-avatar img { width: 40px; height: 40px; }
+  .profile-upload-avatar :is(img, svg) { width: 40px; height: 40px; }
   .profile-edit-button { top: 18px; right: 20px; }
   .profile-information { top: 200px; left: 20px; width: calc(100% - 40px); }
   .profile-information h2, .profile-section-heading h2 { font-size: 16px; line-height: 20px; }
@@ -2837,7 +2837,7 @@ img {
   .profile-user-pet-copy > div { gap: 8px 16px; margin-top: 8px; }
   .profile-user-pet-copy span { font-size: 12px; line-height: 14px; }
   .profile-user-pet-remove { top: 12px; right: 12px; width: 30px; height: 30px; }
-  .profile-user-pet-remove img { width: 16px; height: 16px; }
+  .profile-user-pet-remove :is(img, svg) { width: 16px; height: 16px; }
   .profile-side-card[data-pet-count="0"] { min-height: 586px; }
   .profile-logout-link { bottom: 40px; left: 20px; height: 42px; padding: 12px 28px; font-size: 14px; line-height: 18px; }
   .profile-side-card-empty .profile-logout-link { bottom: 40px; }
@@ -2970,7 +2970,7 @@ img {
   cursor: pointer;
 }
 
-.add-pet-sex-option img {
+.add-pet-sex-option :is(img, svg) {
   width: 24px;
   height: 24px;
 }
@@ -2987,7 +2987,7 @@ img {
   display: block;
 }
 
-.add-pet-sex-multiple img {
+.add-pet-sex-multiple :is(img, svg) {
   width: 18px;
   height: 16px;
 }
@@ -3025,7 +3025,7 @@ img {
   line-height: 1;
 }
 
-.add-pet-photo-preview img {
+.add-pet-photo-preview :is(img, svg) {
   width: 44px;
   height: 44px;
 }
@@ -3084,7 +3084,7 @@ img {
   letter-spacing: -.28px;
 }
 
-.add-pet-upload-button img {
+.add-pet-upload-button :is(img, svg) {
   width: 18px;
   height: 18px;
 }
@@ -3107,6 +3107,8 @@ img {
 .add-pet-form .form-row-two-col select { width: 210px; }
 .add-pet-form .form-row-two-col select { appearance: none; background-color: #fff; background-position: right 16px center; background-size: 20px; background-repeat: no-repeat; }
 .add-pet-calendar-icon { position: absolute; top: 16px; right: 16px; width: 20px; height: 20px; pointer-events: none; }
+.add-pet-species-field { position: relative; }
+.add-pet-species-arrow { position: absolute; top: 16px; right: 16px; pointer-events: none; }
 .add-pet-form input:focus,
 .add-pet-form select:focus { border-color: #f6b83d; }
 
@@ -3148,7 +3150,7 @@ img {
 }
 
 @media (max-width: 767px) {
-  .add-pet-page { max-width: 375px; padding: 24px 20px 40px; gap: 24px; }
+  .add-pet-page { max-width: 375px; padding: 24px 20px 40px; gap: 16px; }
   .add-pet-layout { display: block; }
   .add-pet-art { height: 213px; border-radius: 30px; }
   .add-pet-art > img { inset: 0; width: 100%; height: 100%; object-position: center 35%; }
@@ -3163,7 +3165,7 @@ img {
   .add-pet-photo-row { top: 120px; left: 40px; width: 295px; height: 140px; }
   .add-pet-photo-preview { width: 68px; height: 68px; }
   .add-pet-photo-preview span { font-size: 32px; }
-  .add-pet-photo-preview img { width: 36px; height: 36px; }
+  .add-pet-photo-preview :is(img, svg) { width: 36px; height: 36px; }
   .add-pet-photo-controls { width: 295px; height: 36px; }
   .add-pet-image-input input { width: 170px; height: 36px; padding: 10px; font-size: 14px; }
   .add-pet-upload-button { width: 117px; height: 36px; font-size: 12px; }
@@ -3177,6 +3179,7 @@ img {
   .add-pet-form .form-row-two-col input,
   .add-pet-form .form-row-two-col select { height: 42px; padding: 12px; font-size: 14px; }
   .add-pet-calendar-icon { top: 11px; right: 12px; }
+  .add-pet-species-arrow { top: 11px; right: 12px; }
   .add-pet-submit-row { top: 426px; left: 127px; }
   .add-pet-submit-row button { width: 100px !important; height: 42px; font-size: 14px; }
 }

@@ -23,7 +23,7 @@ test('a pet keeps the server ID used for deletion', () => {
     species: 'dog', sex: 'male', birthday: '2020-09-21',
   }]);
   assert.equal(pet.id, 'server-pet-id');
-  assert.equal(pet.comments, 'Playful dog');
+  assert.equal(pet.title, 'Playful dog');
 });
 
 test('missing partner contacts and work days do not break the directory', () => {

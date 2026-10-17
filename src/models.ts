@@ -52,7 +52,7 @@ export interface UserPetRecord {
   species: string;
   birthday: string;
   sex: string;
-  comments: string;
+  title: string;
   imageUrl: string;
 }
 
@@ -114,7 +114,7 @@ export function userPetsFromApi(pets: CurrentUser['pets'] = []): UserPetRecord[]
     species: pet.species,
     birthday: pet.birthday,
     sex: pet.sex,
-    comments: pet.title,
+    title: pet.title,
     imageUrl: pet.imgURL,
   }));
 }

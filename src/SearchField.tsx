@@ -29,7 +29,7 @@ export default function SearchField({
       <input id={id} type="search" placeholder={placeholder} value={value} onChange={(event) => onChange(event.target.value)} />
       {value && (
         <button className={clearClassName} type="button" aria-label={`Clear ${label.toLowerCase()}`} onClick={onClear}>
-          <img className="search-clear-icon" src={`${import.meta.env.BASE_URL}icons/modal-close.svg`} alt="" />
+          <Icon name="modal-close" width="24" height="24" className="search-clear-icon" />
         </button>
       )}
       <button type="submit" aria-label={`Search ${label.toLowerCase()}`}><Icon name="search" /></button>

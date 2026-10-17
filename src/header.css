@@ -145,12 +145,13 @@
 }
 
 @media (max-width: 767px) {
+  .header-inner { gap: 12px; }
   .mobile-user-link {
     display: block;
     width: 40px;
     height: 40px;
     margin-left: auto;
-    margin-right: 12px;
+    margin-right: 0;
     flex: 0 0 40px;
   }
 
@@ -169,11 +170,12 @@
 .user-profile-chip { padding: 0; border: none; background: transparent; }
 .user-chip-avatar { width: 40px; height: 40px; }
 .user-chip-name { display: none; font-size: 20px; line-height: 20px; letter-spacing: -.6px; }
-.signed-in-actions { display: flex; margin-left: auto; }
+.signed-in-actions { display: none; margin-left: auto; }
 .logged-user-cluster { gap: 8px; }
 .header-logout { display: none; background: #f6b83d; color: white; border-radius: 30px; height: 50px; padding: 15px 35px; font-weight: 700; font-size: 16px; line-height: 20px; letter-spacing: -.48px; order: -1; }
 .header-logout:hover { background: #f9b020; }
 @media (min-width: 768px) {
+  .signed-in-actions { display: flex; }
   .user-chip-avatar { width: 50px; height: 50px; }
   .user-chip-name { display: block; }
   .header-logout { display: block; }

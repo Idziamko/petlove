@@ -1,3 +1,4 @@
+import Icon from './Icon';
 import Loader from './Loader';
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode, type Dispatch, type SetStateAction } from 'react';
 import { getStoredToken, getApiErrorMessage, noticesApi, usersApi, type AddPetRequest, type CurrentUser } from './api';
@@ -133,7 +134,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
 
   return (
     <AppStoreContext.Provider value={{ currentUser, setCurrentUser, favoriteIds: favoriteNotices.map((notice) => notice.id), favoriteNotices, viewedNotices, userPets, refreshUser, toggleFavorite, addUserPet, removeUserPet, clearPrivateData, notifyError }}>
-      {error && <div className="app-notification" role="alert"><span>{error}</span><button className="notification-dismiss" type="button" aria-label="Dismiss notification" onClick={() => setError('')}><img src={`${import.meta.env.BASE_URL}icons/modal-close.svg`} alt="" /></button></div>}
+      {error && <div className="app-notification" role="alert"><span>{error}</span><button className="notification-dismiss" type="button" aria-label="Dismiss notification" onClick={() => setError('')}><Icon name="modal-close" width="24" height="24" /></button></div>}
       {children}
     </AppStoreContext.Provider>
   );
