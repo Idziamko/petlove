@@ -1170,6 +1170,7 @@ function AddPetPage() {
                     <img className="add-pet-sex-icon-selected" src={`${import.meta.env.BASE_URL}icons/multiple-selected.svg`} alt="" />
                   </label>
                 </div>
+                <ErrorMessage name="sex" component="div" className="input-error-caption add-pet-sex-error" />
 
                 <div className="add-pet-photo-row">
                   <div className="add-pet-photo-preview" aria-hidden="true">
@@ -1259,6 +1260,7 @@ function AddPetPage() {
                       <option value="Spider">Spider</option>
                       <option value="Scorpion">Scorpion</option>
                     </Field>
+                    <ErrorMessage name="species" component="div" className="input-error-caption" />
                   </div>
                 </div>
 

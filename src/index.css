@@ -2946,6 +2946,12 @@ img {
   gap: 8px;
 }
 
+.add-pet-sex-error {
+  position: absolute;
+  top: 176px;
+  left: 80px;
+}
+
 .add-pet-sex-option {
   position: relative;
   display: grid;
@@ -3133,6 +3139,7 @@ img {
   .add-pet-form-card { height: 614px; margin-top: 16px; border-radius: 30px; }
   .add-pet-heading { top: 40px; left: 136px; }
   .add-pet-sex { top: 112px; left: 136px; }
+  .add-pet-sex-error { top: 156px; left: 136px; }
   .add-pet-photo-row { top: 130px; left: 136px; }
   .add-pet-title-field { top: 288px; left: 136px; }
   .add-pet-name-field { top: 358px; left: 136px; }
@@ -3151,6 +3158,7 @@ img {
   .add-pet-heading h1 { font-size: 28px; line-height: 28px; }
   .add-pet-heading h1 span { font-size: 14px; line-height: 18px; }
   .add-pet-sex { top: 80px; left: 40px; }
+  .add-pet-sex-error { top: 116px; left: 40px; }
   .add-pet-sex-option { width: 32px; height: 32px; font-size: 20px; }
   .add-pet-photo-row { top: 120px; left: 40px; width: 295px; height: 140px; }
   .add-pet-photo-preview { width: 68px; height: 68px; }
@@ -3176,6 +3184,7 @@ img {
 @media (max-width: 350px) {
   .add-pet-heading,
   .add-pet-sex,
+  .add-pet-sex-error,
   .add-pet-photo-row,
   .add-pet-title-field,
   .add-pet-name-field,
