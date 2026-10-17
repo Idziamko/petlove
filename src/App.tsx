@@ -886,6 +886,8 @@ function ProfilePage() {
   const { currentUser, setCurrentUser, userPets, removeUserPet, toggleFavorite, favoriteNotices, viewedNotices } = useAppStore();
   const [activeProfileTab, setActiveProfileTab] = useState<'favorites' | 'viewed'>('favorites');
   const [isEditing, setIsEditing] = useState(false);
+  const profileEditDialogRef = React.useRef<HTMLDivElement>(null);
+  useDialogA11y(isEditing, profileEditDialogRef, () => setIsEditing(false));
   if (!currentUser) return <Navigate to="/login" replace />;
 
   const profileSchema = Yup.object().shape({
@@ -934,47 +936,14 @@ function ProfilePage() {
             <img src={`${import.meta.env.BASE_URL}icons/edit.svg`} alt="" />
           </button>
 
-          {!isEditing ? (
-            <section className="profile-information">
-              <h2>My information</h2>
-              <div className="profile-information-fields">
-                <div>{currentUser.name}</div>
-                <div>{currentUser.email}</div>
-                <div className="profile-information-phone">{currentUser.phone || '+380'}</div>
-              </div>
-            </section>
-          ) : (
-            <Formik
-              initialValues={{
-                name: currentUser.name,
-                email: currentUser.email,
-                avatar: currentUser.avatar,
-                phone: currentUser.phone || '',
-              }}
-              enableReinitialize
-              validationSchema={profileSchema}
-              onSubmit={handleSaveProfile}
-            >
-              {({ isSubmitting, errors, touched, status }) => (
-                <Form className="profile-edit-panel" noValidate>
-                  <h2>Edit information</h2>
-                  {status && <p className="input-error-caption" role="alert">{String(status)}</p>}
-                  <label htmlFor="edit-name-input">Name<Field id="edit-name-input" name="name" type="text" className={touched.name && errors.name ? 'has-error' : ''} /></label>
-                  <ErrorMessage name="name" component="span" className="input-error-caption" />
-                  <label htmlFor="edit-email-input">Email<Field id="edit-email-input" name="email" type="email" className={touched.email && errors.email ? 'has-error' : ''} /></label>
-                  <ErrorMessage name="email" component="span" className="input-error-caption" />
-                  <label htmlFor="edit-avatar-input">Avatar URL<Field id="edit-avatar-input" name="avatar" type="url" className={touched.avatar && errors.avatar ? 'has-error' : ''} /></label>
-                  <ErrorMessage name="avatar" component="span" className="input-error-caption" />
-                  <label htmlFor="edit-phone-input">Phone<Field id="edit-phone-input" name="phone" type="tel" placeholder="+380" className={touched.phone && errors.phone ? 'has-error' : ''} /></label>
-                  <ErrorMessage name="phone" component="span" className="input-error-caption" />
-                  <div className="profile-edit-actions">
-                    <button type="button" onClick={() => setIsEditing(false)}>Cancel</button>
-                    <button type="submit" disabled={isSubmitting}>{isSubmitting ? 'Saving…' : 'Save'}</button>
-                  </div>
-                </Form>
-              )}
-            </Formik>
-          )}
+          <section className="profile-information">
+            <h2>My information</h2>
+            <div className="profile-information-fields">
+              <div>{currentUser.name}</div>
+              <div>{currentUser.email}</div>
+              <div className="profile-information-phone">{currentUser.phone || '+380'}</div>
+            </div>
+          </section>
 
           <section className="profile-my-pets">
             <div className="profile-section-heading"><h2>My pets</h2><Link to="/add-pet">Add pet <img src={`${import.meta.env.BASE_URL}icons/plus.svg`} alt="" /></Link></div>
@@ -1008,6 +977,52 @@ function ProfilePage() {
           )}
         </section>
       </main>
+      {isEditing && (
+        <div className="modal-dialog-overlay profile-edit-overlay" onClick={() => setIsEditing(false)}>
+          <div
+            ref={profileEditDialogRef}
+            className="profile-edit-modal-card"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="profile-edit-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button type="button" className="modal-close-button profile-edit-close" onClick={() => setIsEditing(false)} aria-label="Close edit profile">
+              <span aria-hidden="true">×</span>
+            </button>
+            <Formik
+              initialValues={{
+                name: currentUser.name,
+                email: currentUser.email,
+                avatar: currentUser.avatar,
+                phone: currentUser.phone || '',
+              }}
+              enableReinitialize
+              validationSchema={profileSchema}
+              onSubmit={handleSaveProfile}
+            >
+              {({ isSubmitting, errors, touched, status }) => (
+                <Form className="profile-edit-panel" noValidate>
+                  <h2 id="profile-edit-title">Edit information</h2>
+                  {status && <p className="input-error-caption" role="alert">{String(status)}</p>}
+                  <label htmlFor="edit-name-input">Name<Field id="edit-name-input" name="name" type="text" className={touched.name && errors.name ? 'has-error' : ''} /></label>
+                  <ErrorMessage name="name" component="span" className="input-error-caption" />
+                  <label htmlFor="edit-email-input">Email<Field id="edit-email-input" name="email" type="email" className={touched.email && errors.email ? 'has-error' : ''} /></label>
+                  <ErrorMessage name="email" component="span" className="input-error-caption" />
+                  <label htmlFor="edit-avatar-input">Avatar URL<Field id="edit-avatar-input" name="avatar" type="url" className={touched.avatar && errors.avatar ? 'has-error' : ''} /></label>
+                  <ErrorMessage name="avatar" component="span" className="input-error-caption" />
+                  <label htmlFor="edit-phone-input">Phone<Field id="edit-phone-input" name="phone" type="tel" placeholder="+380" className={touched.phone && errors.phone ? 'has-error' : ''} /></label>
+                  <ErrorMessage name="phone" component="span" className="input-error-caption" />
+                  <div className="profile-edit-actions">
+                    <button type="button" onClick={() => setIsEditing(false)}>Cancel</button>
+                    <button type="submit" disabled={isSubmitting}>{isSubmitting ? 'Saving…' : 'Save'}</button>
+                  </div>
+                </Form>
+              )}
+            </Formik>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

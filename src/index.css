@@ -2579,19 +2579,39 @@ img {
 
 .profile-empty-state strong { color: #f6b83d; font-weight: 700; }
 
-.profile-edit-panel {
+.profile-edit-overlay {
+  z-index: 1100;
+}
+
+.profile-edit-modal-card {
+  position: relative;
+  width: min(520px, calc(100vw - 40px));
+  max-height: min(720px, calc(100vh - 40px));
+  overflow: auto;
+  padding: 40px;
+  border-radius: 30px;
+  background: #fff;
+  box-shadow: 0 24px 80px rgb(38 38 38 / 18%);
+}
+
+.profile-edit-close {
   position: absolute;
-  z-index: 2;
-  top: 196px;
-  left: 40px;
-  width: calc(100% - 80px);
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 50%;
+  background: rgb(38 38 38 / 5%);
+  color: #262626;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.profile-edit-panel {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 20px;
-  border-radius: 16px;
-  background: #fff;
-  box-shadow: 0 8px 28px rgb(38 38 38 / 15%);
 }
 
 .profile-edit-panel h2 {
@@ -2724,7 +2744,8 @@ img {
   .profile-notice-card:not(.profile-notice-card-removable) .profile-notice-learn { width: 100%; }
   .profile-empty-state { min-height: 300px; padding: 0; }
   .profile-empty-state p { font-size: 14px; line-height: 20px; }
-  .profile-edit-panel { top: 200px; left: 20px; width: calc(100% - 40px); }
+  .profile-edit-modal-card { width: calc(100vw - 40px); padding: 32px 20px 24px; border-radius: 30px; }
+  .profile-edit-close { top: 14px; right: 14px; }
 }
 
 .add-pet-page {
