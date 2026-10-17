@@ -62,6 +62,11 @@ function HeaderBar({ variant = 'standard' }: HeaderBarProps) {
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [logoutOpen]);
+  React.useEffect(() => {
+    const openProfileLogout = () => setLogoutOpen(true);
+    window.addEventListener('petlove:profile-logout', openProfileLogout);
+    return () => window.removeEventListener('petlove:profile-logout', openProfileLogout);
+  }, []);
 
   const handleLogout = async () => {
     setLogoutError(null);
@@ -84,7 +89,7 @@ function HeaderBar({ variant = 'standard' }: HeaderBarProps) {
     <header className={`pet-header ${isHero ? 'header-hero-mode' : 'header-standard-mode'}`}>
       <div className="header-inner">
         <Link to="/home" className="site-brand" aria-label="Petlove homepage">
-          <span>petl</span><img src={`${import.meta.env.BASE_URL}icons/heart.svg`} alt="" className="brand-heart" /><span>ve</span>
+          <span>petl</span><img src={`${import.meta.env.BASE_URL}icons/heart-circle.svg`} alt="" className="brand-heart" /><span>ve</span>
         </Link>
         <nav className="desktop-nav-pills" aria-label="Primary navigation">
           <NavLink
@@ -113,7 +118,7 @@ function HeaderBar({ variant = 'standard' }: HeaderBarProps) {
                 {currentUser.avatar ? (
                   <img src={currentUser.avatar} alt={currentUser.name} className="user-chip-avatar" />
                 ) : (
-                  <img src={`${import.meta.env.BASE_URL}icons/user-circle.svg`} alt="" className="user-chip-avatar" />
+                  <img src={`${import.meta.env.BASE_URL}icons/profile-user.svg`} alt="" className="user-chip-avatar" />
                 )}
                 <span className="user-chip-name">{currentUser.name.split(' ')[0]}</span>
               </Link>
@@ -748,9 +753,44 @@ function NoticesPage() {
     </div>
   );
 }
+function profileDate(value: string) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  return match ? `${match[3]}.${match[2]}.${match[1]}` : value;
+}
+
+function ProfileNoticeCard({ notice, removable, onRemove }: { notice: PetNotice; removable?: boolean; onRemove?: () => void }) {
+  return (
+    <article className={`profile-notice-card${removable ? ' profile-notice-card-removable' : ''}`}>
+      <img src={notice.imageUrl} alt={notice.name} className="profile-notice-image" />
+      <div className="profile-notice-content">
+        <div className="profile-notice-heading">
+          <h3>{notice.title}</h3>
+          <span className="profile-notice-rating"><img src={`${import.meta.env.BASE_URL}icons/star.svg`} alt="" />{notice.rating}</span>
+        </div>
+        <div className="profile-notice-specs">
+          <span><small>Name</small>{notice.name}</span>
+          <span><small>Birthday</small>{profileDate(notice.birthday)}</span>
+          <span><small>Sex</small>{notice.gender}</span>
+          <span><small>Species</small>{notice.species}</span>
+          <span><small>Category</small>{notice.category}</span>
+        </div>
+        <p className="profile-notice-description">{notice.description}</p>
+        <div className="profile-notice-actions">
+          <Link to="/notices" className="profile-notice-learn">Learn more</Link>
+          {removable && onRemove && (
+            <button type="button" className="profile-notice-remove" onClick={onRemove} aria-label={`Remove ${notice.name} from favorites`}>
+              <img src={`${import.meta.env.BASE_URL}icons/trash.svg`} alt="" />
+            </button>
+          )}
+        </div>
+      </div>
+    </article>
+  );
+}
+
 function ProfilePage() {
-  const { currentUser, setCurrentUser, userPets, removeUserPet, toggleFavorite, favoriteNotices } = useAppStore();
-  const [activeProfileTab, setActiveProfileTab] = useState<'pets' | 'favorites'>('pets');
+  const { currentUser, setCurrentUser, userPets, removeUserPet, toggleFavorite, favoriteNotices, viewedNotices } = useAppStore();
+  const [activeProfileTab, setActiveProfileTab] = useState<'favorites' | 'viewed'>('favorites');
   const [isEditing, setIsEditing] = useState(false);
   if (!currentUser) return <Navigate to="/login" replace />;
 
@@ -777,52 +817,33 @@ function ProfilePage() {
     }
   };
 
-  return (
-    <div className="layout-page-container standard-page-layout">
-      <HeaderBar />
+  const notices = activeProfileTab === 'favorites' ? favoriteNotices : viewedNotices;
 
-      <main className="content-readable-area profile-layout-columns">
-        <aside className="profile-user-card" aria-label="User Profile Details">
-          <div className="profile-card-header">
-            <div className="profile-avatar-circle">
-              {currentUser.avatar ? (
-                <img src={currentUser.avatar} alt={currentUser.name} className="profile-avatar-img" />
-              ) : (
-                <span className="profile-avatar-letter">{currentUser.name.charAt(0)}</span>
-              )}
-            </div>
-            <h2 className="profile-user-name">{currentUser.name}</h2>
-            <span className="profile-user-badge">Registered Guardian</span>
-          </div>
+  return (
+    <div className="layout-page-container standard-page-layout profile-page">
+      <HeaderBar />
+      <main className="profile-layout" aria-label="Profile">
+        <aside className={`profile-side-card${userPets.length ? '' : ' profile-side-card-empty'}`} data-pet-count={Math.min(userPets.length, 2)} aria-label="User Profile Details">
+          <div className="profile-role-badge">User <img src={`${import.meta.env.BASE_URL}icons/user-badge.svg`} alt="" /></div>
+          <button type="button" className="profile-upload-button" onClick={() => setIsEditing(true)}>
+            <span className="profile-upload-avatar">
+              {currentUser.avatar ? <img className="profile-avatar-photo" src={currentUser.avatar} alt={currentUser.name} /> : <img src={`${import.meta.env.BASE_URL}icons/user-02.svg`} alt="" />}
+            </span>
+            <span>Upload photo</span>
+          </button>
+          <button type="button" className="profile-edit-button" onClick={() => setIsEditing(true)} aria-label="Edit profile">
+            <img src={`${import.meta.env.BASE_URL}icons/edit.svg`} alt="" />
+          </button>
 
           {!isEditing ? (
-            <div className="profile-details-table">
-              <div className="profile-detail-row">
-                <span className="p-key">Name:</span>
-                <span className="p-val">{currentUser.name}</span>
+            <section className="profile-information">
+              <h2>My information</h2>
+              <div className="profile-information-fields">
+                <div>{currentUser.name}</div>
+                <div>{currentUser.email}</div>
+                <div className="profile-information-phone">{currentUser.phone || '+380'}</div>
               </div>
-              <div className="profile-detail-row">
-                <span className="p-key">Email:</span>
-                <span className="p-val">{currentUser.email}</span>
-              </div>
-              <div className="profile-detail-row">
-                <span className="p-key">Phone:</span>
-                <span className="p-val">{currentUser.phone || 'Not specified'}</span>
-              </div>
-
-              <div className="profile-actions-stack">
-                <button
-                  type="button"
-                  onClick={() => setIsEditing(true)}
-                  className="btn-auth-outline full-width"
-                >
-                  Edit profile details
-                </button>
-                <Link to="/add-pet" className="btn-primary-filled full-width text-center">
-                  + Add pet
-                </Link>
-              </div>
-            </div>
+            </section>
           ) : (
             <Formik
               initialValues={{ name: currentUser.name, phone: currentUser.phone || '' }}
@@ -831,158 +852,51 @@ function ProfilePage() {
               onSubmit={handleSaveProfile}
             >
               {({ isSubmitting, errors, touched, status }) => (
-                <Form className="profile-edit-form" noValidate>
-                  {status && (
-                    <div className="form-message form-message-error" role="alert">
-                      <span className="banner-icon-mark">!</span>
-                      <span>{status}</span>
-                    </div>
-                  )}
-                  <div className="input-field-group">
-                    <label htmlFor="edit-name-input" className="input-field-label">Full Name</label>
-                    <Field
-                      id="edit-name-input"
-                      name="name"
-                      type="text"
-                      className={`text-input-field ${touched.name && errors.name ? 'has-error' : ''}`}
-                    />
-                    <ErrorMessage name="name" component="div" className="input-error-caption" />
-                  </div>
-
-                  <div className="input-field-group">
-                    <label htmlFor="edit-phone-input" className="input-field-label">Phone Number</label>
-                    <Field
-                      id="edit-phone-input"
-                      name="phone"
-                      type="tel"
-                      placeholder="+380XXXXXXXXX"
-                      className={`text-input-field ${touched.phone && errors.phone ? 'has-error' : ''}`}
-                    />
-                    <ErrorMessage name="phone" component="div" className="input-error-caption" />
-                  </div>
-
-                  <div className="edit-buttons-row">
-                    <button type="submit" disabled={isSubmitting} className="btn-primary-filled">
-                      {isSubmitting ? 'Saving…' : 'Save'}
-                    </button>
-                    <button type="button" onClick={() => setIsEditing(false)} className="btn-auth-outline">
-                      Cancel
-                    </button>
+                <Form className="profile-edit-panel" noValidate>
+                  <h2>Edit information</h2>
+                  {status && <p className="input-error-caption" role="alert">{String(status)}</p>}
+                  <label htmlFor="edit-name-input">Name<Field id="edit-name-input" name="name" type="text" className={touched.name && errors.name ? 'has-error' : ''} /></label>
+                  <ErrorMessage name="name" component="span" className="input-error-caption" />
+                  <label htmlFor="edit-phone-input">Phone<Field id="edit-phone-input" name="phone" type="tel" placeholder="+380" className={touched.phone && errors.phone ? 'has-error' : ''} /></label>
+                  <ErrorMessage name="phone" component="span" className="input-error-caption" />
+                  <div className="profile-edit-actions">
+                    <button type="button" onClick={() => setIsEditing(false)}>Cancel</button>
+                    <button type="submit" disabled={isSubmitting}>{isSubmitting ? 'Saving…' : 'Save'}</button>
                   </div>
                 </Form>
               )}
             </Formik>
           )}
+
+          <section className="profile-my-pets">
+            <div className="profile-section-heading"><h2>My pets</h2><Link to="/add-pet">Add pet <img src={`${import.meta.env.BASE_URL}icons/plus.svg`} alt="" /></Link></div>
+            {userPets.map((pet) => (
+              <article key={pet.id} className="profile-user-pet-card">
+                <img src={pet.imageUrl} alt={pet.name} className="profile-user-pet-image" />
+                <div className="profile-user-pet-copy">
+                  <strong>{pet.name}</strong>
+                  <div><span><small>Name</small>{pet.name}</span><span><small>Birthday</small>{profileDate(pet.birthday)}</span><span><small>Sex</small>{pet.sex}</span><span><small>Species</small>{pet.species}</span></div>
+                </div>
+                <button type="button" className="profile-user-pet-remove" onClick={() => removeUserPet(pet.id)} aria-label={`Remove ${pet.name}`}><img src={`${import.meta.env.BASE_URL}icons/trash.svg`} alt="" /></button>
+              </article>
+            ))}
+          </section>
+          <button type="button" className="profile-logout-link" onClick={() => window.dispatchEvent(new Event('petlove:profile-logout'))}>LOG OUT</button>
         </aside>
-        <section className="profile-tab-section" aria-label="User pets and favorites">
-          <div className="profile-tabs-header">
-            <div className="tab-pill-switcher">
-              <button
-                type="button"
-                className={`tab-switch-pill ${activeProfileTab === 'pets' ? 'active' : ''}`}
-                onClick={() => setActiveProfileTab('pets')}
-              >
-                My pets ({userPets.length})
-              </button>
-              <button
-                type="button"
-                className={`tab-switch-pill ${activeProfileTab === 'favorites' ? 'active' : ''}`}
-                onClick={() => setActiveProfileTab('favorites')}
-              >
-                Favorites ({favoriteNotices.length})
-              </button>
-            </div>
 
-            <Link to="/add-pet" className="btn-pill-add-action">
-              Add pet +
-            </Link>
+        <section className="profile-notices-panel" aria-label="Saved pet notices">
+          <div className="profile-tabs">
+            <button type="button" className={activeProfileTab === 'favorites' ? 'active' : ''} onClick={() => setActiveProfileTab('favorites')}>My favorite pets</button>
+            <button type="button" className={activeProfileTab === 'viewed' ? 'active' : ''} onClick={() => setActiveProfileTab('viewed')}>Viewed</button>
           </div>
-
-          {activeProfileTab === 'pets' ? (
-            userPets.length > 0 ? (
-              <div className="user-pets-list">
-                {userPets.map((p) => (
-                  <article key={p.id} className="user-pet-card-horizontal">
-                    <img src={p.imageUrl} alt={p.name} className="user-pet-thumb" />
-                    <div className="user-pet-info">
-                      <div className="user-pet-title-row">
-                        <h3 className="user-pet-name">{p.name}</h3>
-                        <button
-                          type="button"
-                          onClick={() => removeUserPet(p.id)}
-                          className="btn-pet-delete"
-                          title="Remove pet card"
-                          aria-label={`Remove ${p.name}`}
-                        >
-                          🗑
-                        </button>
-                      </div>
-
-                      <div className="user-pet-meta-chips">
-                        <span><strong>Species:</strong> {p.species}</span>
-                        <span><strong>Birthday:</strong> {p.birthday}</span>
-                        <span><strong>Sex:</strong> {p.sex}</span>
-                      </div>
-
-                      <p className="user-pet-notes">{p.comments}</p>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            ) : (
-              <div className="state-empty-box">
-                <span className="state-empty-symbol">🐾</span>
-                <h3 className="state-empty-title">No pets added yet</h3>
-                <p className="state-empty-desc">
-                  Register your companion to keep veterinary records and adoption info easily accessible.
-                </p>
-                <Link to="/add-pet" className="btn-primary-filled">
-                  Add your first pet
-                </Link>
-              </div>
-            )
+          {notices.length > 0 ? (
+            <div className="profile-notices-grid">
+              {notices.map((notice) => <ProfileNoticeCard key={notice.id} notice={notice} removable={activeProfileTab === 'favorites'} onRemove={activeProfileTab === 'favorites' ? () => toggleFavorite(notice.id) : undefined} />)}
+            </div>
           ) : (
-            favoriteNotices.length > 0 ? (
-              <div className="notices-cards-grid">
-                {favoriteNotices.map((pet) => (
-                  <article key={pet.id} className="notice-pet-card">
-                    <div className="notice-image-container">
-                      <img src={pet.imageUrl} alt={pet.name} className="notice-main-photo" />
-                      <button
-                        type="button"
-                        onClick={() => toggleFavorite(pet.id)}
-                        className="notice-heart-button is-fav"
-                        aria-label="Remove from favorites"
-                      >
-                        ♥
-                      </button>
-                    </div>
-                    <div className="notice-content-body">
-                      <h3 className="notice-pet-name">{pet.name}</h3>
-                      <p className="notice-summary-desc">{pet.title}</p>
-                      <button
-                        type="button"
-                        onClick={() => toggleFavorite(pet.id)}
-                        className="btn-auth-outline full-width"
-                      >
-                        Remove from favorites
-                      </button>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            ) : (
-              <div className="state-empty-box">
-                <span className="state-empty-symbol">♡</span>
-                <h3 className="state-empty-title">No favorites saved yet</h3>
-                <p className="state-empty-desc">
-                  Explore notices and click the heart icon on any pet you want to keep in mind.
-                </p>
-                <Link to="/notices" className="btn-primary-filled">
-                  Browse pet notices
-                </Link>
-              </div>
-            )
+            <div className="profile-empty-state">
+              <p>Oops, looks like there aren&apos;t any furries on our adorable page yet. Do not worry! View your pets on the &quot;find your favorite pet&quot; page and add them to your favorites.</p>
+            </div>
           )}
         </section>
       </main>
@@ -998,7 +912,7 @@ function AddPetPage() {
     title: Yup.string().required('Title is required'),
     name: Yup.string().required('Pet name is required'),
     birthday: Yup.string()
-      .matches(/^\d{4}-\d{2}-\d{2}$/, 'Use the YYYY-MM-DD format')
+      .matches(/^(\d{4}-\d{2}-\d{2}|\d{2}\.\d{2}\.\d{4})$/, 'Use the DD.MM.YYYY format')
       .required('Birthday or adoption date is required'),
     species: Yup.string().required('Species is required'),
     sex: Yup.string().required('Sex is required'),
@@ -1011,16 +925,17 @@ function AddPetPage() {
   }
 
   return (
-    <div className="layout-page-container standard-page-layout">
+    <div className="layout-page-container standard-page-layout add-pet-page">
       <HeaderBar />
 
-      <main className="content-readable-area form-page-center">
-        <div className="add-pet-form-card">
-          <header className="auth-card-heading">
-            <h1 className="auth-screen-title">Add pet</h1>
-            <p className="auth-screen-desc">
-              Fill in your companion&apos;s details to save them into your profile.
-            </p>
+      <main className="add-pet-layout">
+        <section className="add-pet-art" aria-label="Pet image preview">
+          <img src={`${import.meta.env.BASE_URL}images/add-pet-art.png`} alt="" />
+          <div className="add-pet-art-shape" style={{ backgroundImage: `url(${import.meta.env.BASE_URL}images/add-pet-shape.svg)` }} />
+        </section>
+        <section className="add-pet-form-card">
+          <header className="add-pet-heading">
+            <h1>Add my pet <span>/ Personal details</span></h1>
           </header>
 
           {successBanner && (
@@ -1036,18 +951,21 @@ function AddPetPage() {
               name: '',
               birthday: '',
               species: 'Dog',
-              sex: 'Male',
+              sex: '',
               imageUrl: '',
             }}
             validationSchema={addPetSchema}
             onSubmit={async (values, { setSubmitting, setStatus }) => {
               try {
+                const birthday = /^\d{2}\.\d{2}\.\d{4}$/.test(values.birthday)
+                  ? values.birthday.split('.').reverse().join('-')
+                  : values.birthday;
                 await addUserPet({
                   name: values.name,
                   title: values.title,
                   imgURL: values.imageUrl,
                   species: values.species.toLowerCase() as NoticeSpecies,
-                  birthday: values.birthday,
+                  birthday,
                   sex: values.sex.toLowerCase() as NoticeSex,
                 });
                 setSuccessBanner(true);
@@ -1060,36 +978,69 @@ function AddPetPage() {
             }}
           >
             {({ isSubmitting, errors, touched, status }) => (
-              <Form className="formik-auth-form" noValidate>
+              <Form className="add-pet-form" noValidate>
                 {status && (
                   <div className="form-message form-message-error" role="alert">
                     <span className="banner-icon-mark">!</span>
                     <span>{status}</span>
                   </div>
                 )}
-                <div className="input-field-group">
-                  <label htmlFor="pet-title-input" className="input-field-label">
-                    Title
+                <div className="add-pet-sex" role="radiogroup" aria-label="Pet sex">
+                  <label className="add-pet-sex-option add-pet-sex-female">
+                    <Field type="radio" name="sex" value="Female" aria-label="Female" />
+                    <img className="add-pet-sex-icon-default" src={`${import.meta.env.BASE_URL}icons/female.svg`} alt="" />
+                    <img className="add-pet-sex-icon-selected" src={`${import.meta.env.BASE_URL}icons/female-selected.svg`} alt="" />
                   </label>
+                  <label className="add-pet-sex-option add-pet-sex-male">
+                    <Field type="radio" name="sex" value="Male" aria-label="Male" />
+                    <img className="add-pet-sex-icon-default" src={`${import.meta.env.BASE_URL}icons/male.svg`} alt="" />
+                    <img className="add-pet-sex-icon-selected" src={`${import.meta.env.BASE_URL}icons/male-selected.svg`} alt="" />
+                  </label>
+                  <label className="add-pet-sex-option add-pet-sex-multiple">
+                    <Field type="radio" name="sex" value="Multiple" aria-label="Multiple" />
+                    <img className="add-pet-sex-icon-default" src={`${import.meta.env.BASE_URL}icons/multiple.svg`} alt="" />
+                    <img className="add-pet-sex-icon-selected" src={`${import.meta.env.BASE_URL}icons/multiple-selected.svg`} alt="" />
+                  </label>
+                </div>
+
+                <div className="add-pet-photo-row">
+                  <div className="add-pet-photo-preview" aria-hidden="true">
+                    <img src={`${import.meta.env.BASE_URL}icons/paw.svg`} alt="" />
+                  </div>
+                  <div className="add-pet-photo-controls">
+                    <label htmlFor="pet-image-input" className="add-pet-image-input">
+                      <Field
+                        id="pet-image-input"
+                        name="imageUrl"
+                        type="url"
+                        placeholder="Enter URL"
+                        className={touched.imageUrl && errors.imageUrl ? 'has-error' : ''}
+                      />
+                    </label>
+                    <button type="button" className="add-pet-upload-button" onClick={() => document.getElementById('pet-image-input')?.focus()}>
+                      Upload photo <img src={`${import.meta.env.BASE_URL}icons/upload-cloud.svg`} alt="" />
+                    </button>
+                  </div>
+                </div>
+                <ErrorMessage name="imageUrl" component="div" className="input-error-caption" />
+
+                <div className="input-field-group add-pet-title-field">
                   <Field
                     id="pet-title-input"
                     name="title"
                     type="text"
-                    placeholder="e.g. Joyful golden buddy"
+                    placeholder="Title"
                     className={`text-input-field ${touched.title && errors.title ? 'has-error' : ''}`}
                   />
                   <ErrorMessage name="title" component="div" className="input-error-caption" />
                 </div>
 
-                <div className="input-field-group">
-                  <label htmlFor="pet-name-input" className="input-field-label">
-                    Pet&apos;s Name
-                  </label>
+                <div className="input-field-group add-pet-name-field">
                   <Field
                     id="pet-name-input"
                     name="name"
                     type="text"
-                    placeholder="e.g. Milo"
+                    placeholder="Pet’s Name"
                     className={`text-input-field ${touched.name && errors.name ? 'has-error' : ''}`}
                   />
                   <ErrorMessage name="name" component="div" className="input-error-caption" />
@@ -1097,28 +1048,26 @@ function AddPetPage() {
 
                 <div className="form-row-two-col">
                   <div className="input-field-group">
-                    <label htmlFor="pet-bday-input" className="input-field-label">
-                      Birthday / Date
-                    </label>
-                    <Field
-                      id="pet-bday-input"
-                      name="birthday"
-                      type="date"
-                      placeholder="YYYY-MM-DD"
-                      className={`text-input-field ${touched.birthday && errors.birthday ? 'has-error' : ''}`}
-                    />
+                    <div className="add-pet-birthday-field">
+                      <Field
+                        id="pet-bday-input"
+                        name="birthday"
+                        type="text"
+                        placeholder="00.00.0000"
+                        className={`text-input-field ${touched.birthday && errors.birthday ? 'has-error' : ''}`}
+                      />
+                      <img src={`${import.meta.env.BASE_URL}icons/calendar.svg`} alt="" className="add-pet-calendar-icon" />
+                    </div>
                     <ErrorMessage name="birthday" component="div" className="input-error-caption" />
                   </div>
 
-                  <div className="input-field-group">
-                    <label htmlFor="pet-species-select" className="input-field-label">
-                      Species
-                    </label>
+                  <div className="input-field-group add-pet-species-field">
                     <Field
                       id="pet-species-select"
                       as="select"
                       name="species"
                       className="filter-select-control w-full"
+                      style={{ backgroundImage: `url(${import.meta.env.BASE_URL}icons/chevron-down.svg)` }}
                     >
                       <option value="Dog">Dog</option>
                       <option value="Cat">Cat</option>
@@ -1138,35 +1087,7 @@ function AddPetPage() {
                   </div>
                 </div>
 
-                <div className="input-field-group">
-                  <span className="input-field-label">Sex</span>
-                  <div className="radio-pill-group" role="radiogroup" aria-label="Pet sex">
-                    <label className="radio-pill-option">
-                      <Field type="radio" name="sex" value="Female" />
-                      <span>Female</span>
-                    </label>
-                    <label className="radio-pill-option">
-                      <Field type="radio" name="sex" value="Male" />
-                      <span>Male</span>
-                    </label>
-                  </div>
-                </div>
-
-                <div className="input-field-group">
-                  <label htmlFor="pet-image-input" className="input-field-label">
-                    Image URL
-                  </label>
-                  <Field
-                    id="pet-image-input"
-                    name="imageUrl"
-                    type="url"
-                    placeholder="https://example.com/pet.webp"
-                    className={`text-input-field ${touched.imageUrl && errors.imageUrl ? 'has-error' : ''}`}
-                  />
-                  <ErrorMessage name="imageUrl" component="div" className="input-error-caption" />
-                </div>
-
-                <div className="form-submit-actions-row">
+                <div className="add-pet-submit-row">
                   <button
                     type="button"
                     onClick={() => navigate('/profile')}
@@ -1179,13 +1100,13 @@ function AddPetPage() {
                     disabled={isSubmitting}
                     className="btn-primary-filled"
                   >
-                    {isSubmitting ? 'SAVING...' : 'SAVE PET'}
+                    {isSubmitting ? 'Saving…' : 'Submit'}
                   </button>
                 </div>
               </Form>
             )}
           </Formik>
-        </div>
+        </section>
       </main>
     </div>
   );
