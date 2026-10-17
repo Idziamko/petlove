@@ -11,7 +11,7 @@ interface AppStore {
   viewedNotices: PetNotice[];
   userPets: UserPetRecord[];
   refreshUser: () => Promise<void>;
-  toggleFavorite: (id: string) => Promise<void>;
+  toggleFavorite: (id: string) => Promise<boolean>;
   addUserPet: (pet: AddPetRequest) => Promise<void>;
   removeUserPet: (id: string) => Promise<void>;
   clearPrivateData: () => void;
@@ -90,7 +90,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
   }, [clearPrivateData]);
 
   const toggleFavorite = async (id: string) => {
-    if (!currentUser || pendingFavorites.current.has(id)) return;
+    if (!currentUser || pendingFavorites.current.has(id)) return false;
     pendingFavorites.current.add(id);
     try {
       if (favoriteNotices.some((notice) => notice.id === id)) {
@@ -99,8 +99,10 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
         await noticesApi.addFavorite(id);
       }
       await refreshUser();
+      return true;
     } catch (reason) {
       setError(getApiErrorMessage(reason, 'Unable to update favorites. Please try again.'));
+      return false;
     } finally {
       pendingFavorites.current.delete(id);
     }

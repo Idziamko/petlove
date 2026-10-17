@@ -537,8 +537,8 @@ function NoticesPage() {
       return;
     }
     const wasFavorite = favoriteIds.includes(id);
-    await toggleFavorite(id);
-    if (!wasFavorite) {
+    const updated = await toggleFavorite(id);
+    if (updated && !wasFavorite) {
       setFocusedPet(null);
       setCongratsOpen(true);
     }
