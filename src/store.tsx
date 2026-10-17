@@ -1,12 +1,14 @@
 import Icon from './Icon';
 import Loader from './Loader';
-import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode, type Dispatch, type SetStateAction } from 'react';
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
+import { Provider, useDispatch, useSelector } from 'react-redux';
 import { getStoredToken, getApiErrorMessage, noticesApi, usersApi, type AddPetRequest, type CurrentUser } from './api';
 import { petNoticeFromApi, userPetsFromApi, userProfileFromApi, type PetNotice, type UserPetRecord, type UserProfile } from './models';
+import { profileChanged, sessionCleared, store, userLoaded, type AppDispatch, type RootState } from './session';
 
 interface AppStore {
   currentUser: UserProfile | null;
-  setCurrentUser: Dispatch<SetStateAction<UserProfile | null>>;
+  setCurrentUser: (user: UserProfile | null) => void;
   favoriteIds: string[];
   favoriteNotices: PetNotice[];
   viewedNotices: PetNotice[];
@@ -28,29 +30,38 @@ export function useAppStore() {
 }
 
 export function AppStoreProvider({ children }: { children: ReactNode }) {
-  const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
+  return (
+    <Provider store={store}>
+      <AppStoreContent>{children}</AppStoreContent>
+    </Provider>
+  );
+}
+
+function AppStoreContent({ children }: { children: ReactNode }) {
+  const dispatch = useDispatch<AppDispatch>();
+  const { currentUser, favoriteNotices, viewedNotices, userPets } = useSelector((state: RootState) => state.session);
   const [isReady, setIsReady] = useState(false);
   const [startupProgress, setStartupProgress] = useState(0);
-  const [favoriteNotices, setFavoriteNotices] = useState<PetNotice[]>([]);
-  const [viewedNotices, setViewedNotices] = useState<PetNotice[]>([]);
-  const [userPets, setUserPets] = useState<UserPetRecord[]>([]);
   const [error, setError] = useState('');
   const pendingFavorites = useRef(new Set<string>());
 
   const applyUser = useCallback((user: CurrentUser) => {
-    setCurrentUser(userProfileFromApi(user));
-    setFavoriteNotices((user.noticesFavorites || []).map((notice) => petNoticeFromApi(notice)));
-    setViewedNotices((user.noticesViewed || []).map((notice) => petNoticeFromApi(notice)));
-    setUserPets(userPetsFromApi(user.pets));
-  }, []);
+    dispatch(userLoaded({
+      currentUser: userProfileFromApi(user),
+      favoriteNotices: (user.noticesFavorites || []).map((notice) => petNoticeFromApi(notice)),
+      viewedNotices: (user.noticesViewed || []).map((notice) => petNoticeFromApi(notice)),
+      userPets: userPetsFromApi(user.pets)
+    }));
+  }, [dispatch]);
+
+  const setCurrentUser = useCallback((user: UserProfile | null) => {
+    dispatch(profileChanged(user));
+  }, [dispatch]);
 
   const clearPrivateData = useCallback(() => {
-    setCurrentUser(null);
-    setFavoriteNotices([]);
-    setViewedNotices([]);
-    setUserPets([]);
+    dispatch(sessionCleared());
     pendingFavorites.current.clear();
-  }, []);
+  }, [dispatch]);
 
   const notifyError = useCallback((message: string) => {
     setError(message);
