@@ -1,8 +1,8 @@
 import Loader from './Loader';
 import { useEffect, useState, type ReactNode } from 'react';
 import { newsApi, getApiErrorMessage, type NewsItem } from './api';
-import Icon from './Icon';
 import Pagination from './Pagination';
+import SearchField from './SearchField';
 import Title from './Title';
 import './news.css';
 
@@ -38,12 +38,16 @@ export default function NewsPage({ header }: { header: ReactNode }) {
       <main className="news-content">
         <div className="news-heading">
           <Title>News</Title>
-          <form className="news-search" onSubmit={(event) => { event.preventDefault(); setQuery({ keyword: search.trim(), page: 1 }); }}>
-            <label htmlFor="news-search" className="sr-only">Search news</label>
-            <input id="news-search" type="search" placeholder="Search" value={search} onChange={(event) => setSearch(event.target.value)} />
-            {search && <button className="news-clear" type="button" aria-label="Clear news search" onClick={() => { setSearch(''); setQuery({ keyword: '', page: 1 }); }}>×</button>}
-            <button type="submit" aria-label="Search news"><Icon name="search" /></button>
-          </form>
+          <SearchField
+            id="news-search"
+            label="news"
+            value={search}
+            className="news-search"
+            clearClassName="news-clear"
+            onChange={setSearch}
+            onSubmit={() => setQuery({ keyword: search.trim(), page: 1 })}
+            onClear={() => { setSearch(''); setQuery({ keyword: '', page: 1 }); }}
+          />
         </div>
         {isLoading ? <Loader /> : error ? (
           <div role="alert"><p>{error}</p><button type="button" className="btn-auth-outline" onClick={() => setRetry((value) => value + 1)}>Try again</button></div>

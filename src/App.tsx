@@ -243,7 +243,7 @@ function HeaderBar({ variant = 'standard' }: HeaderBarProps) {
   );
 }
 function LoginPage() {
-  const { currentUser, refreshUser } = useAppStore();
+  const { currentUser, refreshUser, notifyError } = useAppStore();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [bannerMessage, setBannerMessage] = useState<string | null>(null);
@@ -289,7 +289,9 @@ function LoginPage() {
                 setBannerMessage('Signed in successfully! Redirecting to your dashboard...');
                 navigate('/profile', { replace: true });
               } catch (error) {
-                setStatus(getApiErrorMessage(error, 'Unable to sign in right now.'));
+                const message = getApiErrorMessage(error, 'Unable to sign in right now.');
+                setStatus(message);
+                notifyError(message);
               } finally {
                 setSubmitting(false);
               }
@@ -365,7 +367,7 @@ function LoginPage() {
   );
 }
 function RegisterPage() {
-  const { currentUser, refreshUser } = useAppStore();
+  const { currentUser, refreshUser, notifyError } = useAppStore();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [bannerMessage, setBannerMessage] = useState<string | null>(null);
@@ -421,7 +423,9 @@ function RegisterPage() {
                 setBannerMessage('Account created successfully! Redirecting...');
                 navigate('/profile', { replace: true });
               } catch (error) {
-                setStatus(getApiErrorMessage(error, 'Unable to create the account right now.'));
+                const message = getApiErrorMessage(error, 'Unable to create the account right now.');
+                setStatus(message);
+                notifyError(message);
               } finally {
                 setSubmitting(false);
               }
@@ -894,7 +898,7 @@ function ProfileNoticeCard({ notice, removable, onRemove }: { notice: PetNotice;
 }
 
 function ProfilePage() {
-  const { currentUser, setCurrentUser, userPets, removeUserPet, toggleFavorite, favoriteNotices, viewedNotices } = useAppStore();
+  const { currentUser, setCurrentUser, userPets, removeUserPet, toggleFavorite, favoriteNotices, viewedNotices, notifyError } = useAppStore();
   const [activeProfileTab, setActiveProfileTab] = useState<'favorites' | 'viewed'>('favorites');
   const [isEditing, setIsEditing] = useState(false);
   const profileEditDialogRef = React.useRef<HTMLDivElement>(null);
@@ -929,7 +933,9 @@ function ProfilePage() {
       setCurrentUser(userProfileFromApi(updatedUser));
       setIsEditing(false);
     } catch (error) {
-      setStatus(getApiErrorMessage(error, 'Unable to update your profile right now.'));
+      const message = getApiErrorMessage(error, 'Unable to update your profile right now.');
+      setStatus(message);
+      notifyError(message);
     } finally {
       setSubmitting(false);
     }
@@ -1060,7 +1066,7 @@ function ProfilePage() {
   );
 }
 function AddPetPage() {
-  const { addUserPet, currentUser } = useAppStore();
+  const { addUserPet, currentUser, notifyError } = useAppStore();
   const navigate = useNavigate();
   const addPetSchema = Yup.object().shape({
     title: Yup.string().required('Title is required'),
@@ -1117,7 +1123,9 @@ function AddPetPage() {
                 });
                 navigate('/profile', { replace: true });
               } catch (error) {
-                setStatus(getApiErrorMessage(error, 'Unable to save this pet right now.'));
+                const message = getApiErrorMessage(error, 'Unable to save this pet right now.');
+                setStatus(message);
+                notifyError(message);
               } finally {
                 setSubmitting(false);
               }

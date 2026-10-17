@@ -3,6 +3,7 @@ import Select from 'react-select';
 import AsyncSelect from 'react-select/async';
 import { citiesApi, noticesApi, getApiErrorMessage, type NoticeQuery } from './api';
 import Icon from './Icon';
+import SearchField from './SearchField';
 import './notices.css';
 
 type Option = { value: string; label: string };
@@ -35,11 +36,15 @@ export default function NoticeFilters({ value, onChange }: { value: NoticeFilter
   ];
   return <section className="notice-filters" aria-label="Search filters">
     <div className="notice-filter-fields">
-      <form className="notice-search" onSubmit={event => { event.preventDefault(); update('keyword', keyword.trim() || undefined); }}>
-        <input aria-label="Search pet notices" placeholder="Search" value={keyword} onChange={event => setKeyword(event.target.value)} />
-        {keyword && <button type="button" aria-label="Clear pet search" onClick={() => { setKeyword(''); update('keyword'); }}>×</button>}
-        <button type="submit" aria-label="Submit pet search"><Icon name="search" /></button>
-      </form>
+      <SearchField
+        id="notice-search"
+        label="pet notices"
+        value={keyword}
+        className="notice-search"
+        onChange={setKeyword}
+        onSubmit={() => update('keyword', keyword.trim() || undefined)}
+        onClear={() => { setKeyword(''); update('keyword'); }}
+      />
       {fields.map(field => <Select<Option> key={field.key} inputId={`notice-${field.key}`} aria-label={field.placeholder} className={`notice-select notice-select-${field.key}`} classNamePrefix="pet-select" placeholder={field.placeholder} options={field.options} isClearable isSearchable={false} value={field.options.find(option => option.value === value[field.key]) || null} onChange={option => update(field.key, option?.value)} />)}
       <AsyncSelect<Option> inputId="notice-location" aria-label="Location" components={{ DropdownIndicator: () => <span className="location-search-icon"><Icon name="search" /></span> }} className="notice-select notice-select-location" classNamePrefix="pet-select" placeholder="Location" isClearable cacheOptions value={city} noOptionsMessage={({ inputValue }) => inputValue.length < 3 ? 'Enter at least 3 letters' : 'No cities found'} loadOptions={async input => {
         if (input.trim().length < 3) return [];
