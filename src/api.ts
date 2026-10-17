@@ -144,7 +144,11 @@ export interface AddPetRequest {
 
 const client = axios.create({
   baseURL: API_BASE_URL,
+  timeout: 15000,
   headers: { 'Content-Type': 'application/json' },
+  onDownloadProgress: event => {
+    if (event.total) window.dispatchEvent(new CustomEvent('petlove:download-progress', { detail: event.loaded / event.total * 100 }));
+  },
 });
 
 client.interceptors.request.use((config) => {

@@ -1,3 +1,4 @@
+import Loader from './Loader';
 import { useEffect, useState, type ReactNode } from 'react';
 import { newsApi, getApiErrorMessage, type NewsItem } from './api';
 import Icon from './Icon';
@@ -44,7 +45,7 @@ export default function NewsPage({ header }: { header: ReactNode }) {
             <button type="submit" aria-label="Search news"><Icon name="search" /></button>
           </form>
         </div>
-        {isLoading ? <p role="status">Loading news…</p> : error ? (
+        {isLoading ? <Loader /> : error ? (
           <div role="alert"><p>{error}</p><button type="button" className="btn-auth-outline" onClick={() => setRetry((value) => value + 1)}>Try again</button></div>
         ) : stories.length === 0 ? <p>No news found. Try another search.</p> : (
           <div className="news-cards">

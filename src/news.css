@@ -43,3 +43,5 @@
   .news-heading { margin-bottom: 60px; }
   .news-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px 35px; }
 }
+
+.news-search:focus-within { border-color: #f6b83d; }

@@ -142,3 +142,21 @@
   .menu-icon-tablet { display: block; }
   .header-standard-mode .site-brand { font-weight: 700; }
 }
+
+.nav-link-pill:hover { border-color: #f6b83d; }
+.guest-action-cluster .btn-auth-solid:hover { background: #f9b020; }
+.guest-action-cluster .btn-auth-outline:hover { background: #fbe7c1; }
+.home-hero .guest-action-cluster .btn-auth-solid:hover { background: #fff4df; color: #f6b83d; border-color: transparent; }
+.user-profile-chip { padding: 0; border: none; background: transparent; }
+.user-chip-avatar { width: 40px; height: 40px; }
+.user-chip-name { display: none; font-size: 20px; line-height: 20px; letter-spacing: -.6px; }
+.signed-in-actions { display: flex; margin-left: auto; }
+.logged-user-cluster { gap: 8px; }
+.header-logout { display: none; background: #f6b83d; color: white; border-radius: 30px; height: 50px; padding: 15px 35px; font-weight: 700; font-size: 16px; line-height: 20px; letter-spacing: -.48px; order: -1; }
+.header-logout:hover { background: #f9b020; }
+@media (min-width: 768px) {
+  .user-chip-avatar { width: 50px; height: 50px; }
+  .user-chip-name { display: block; }
+  .header-logout { display: block; }
+  .home-hero .header-logout { display: none; }
+}

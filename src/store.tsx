@@ -1,3 +1,4 @@
+import Loader from './Loader';
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode, type Dispatch, type SetStateAction } from 'react';
 import { getStoredToken, getApiErrorMessage, noticesApi, usersApi, type AddPetRequest, type CurrentUser } from './api';
 import { petNoticeFromApi, userPetsFromApi, userProfileFromApi, type PetNotice, type UserPetRecord, type UserProfile } from './models';
@@ -26,7 +27,8 @@ export function useAppStore() {
 
 export function AppStoreProvider({ children }: { children: ReactNode }) {
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
-  const [isReady, setIsReady] = useState(!getStoredToken());
+  const [isReady, setIsReady] = useState(false);
+  const [startupProgress, setStartupProgress] = useState(0);
   const [favoriteNotices, setFavoriteNotices] = useState<PetNotice[]>([]);
   const [viewedNotices, setViewedNotices] = useState<PetNotice[]>([]);
   const [userPets, setUserPets] = useState<UserPetRecord[]>([]);
@@ -58,14 +60,23 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let active = true;
     const token = getStoredToken();
-    if (!token) return;
-    usersApi.full().then((user) => {
-      if (active && getStoredToken() === token) applyUser(user);
-    }).catch((reason) => {
-      if (active) setError(getApiErrorMessage(reason, 'Unable to restore your session. Please try again.'));
-    }).finally(() => {
-      if (active) setIsReady(true);
+    const picture = new Image();
+    const imageReady = new Promise<void>(resolve => {
+      picture.onload = () => resolve();
+      picture.onerror = () => resolve();
+      picture.src = `${import.meta.env.BASE_URL}images/loading.webp`;
     });
+    const tasks: Promise<unknown>[] = [imageReady, document.fonts.ready];
+    if (token) tasks.push(usersApi.full().then(user => {
+      if (active && getStoredToken() === token) applyUser(user);
+    }).catch(reason => {
+      if (active) setError(getApiErrorMessage(reason, 'Unable to restore your session. Please try again.'));
+    }));
+    let completed = 0;
+    Promise.allSettled(tasks.map(task => task.finally(() => {
+      completed += 1;
+      if (active) setStartupProgress(completed / tasks.length * 100);
+    }))).then(() => { if (active) setIsReady(true); });
     return () => { active = false; };
   }, [applyUser]);
 
@@ -111,7 +122,7 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  if (!isReady) return <div className="app-session-loading" role="status">Loading…</div>;
+  if (!isReady) return <Loader progress={startupProgress} />;
 
   return (
     <AppStoreContext.Provider value={{ currentUser, setCurrentUser, favoriteIds: favoriteNotices.map((notice) => notice.id), favoriteNotices, viewedNotices, userPets, refreshUser, toggleFavorite, addUserPet, removeUserPet, clearPrivateData }}>

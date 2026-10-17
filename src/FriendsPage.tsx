@@ -1,3 +1,4 @@
+import Loader from './Loader';
 import { useEffect, useState, type ReactNode } from 'react';
 import { friendsApi, getApiErrorMessage, type Friend } from './api';
 import { friendHours } from './friendHours';
@@ -37,7 +38,7 @@ export default function FriendsPage({ header }: { header: ReactNode }) {
     {header}
     <main className="friends-content">
       <Title>Our friends</Title>
-      {loading ? <p role="status">Loading our friends…</p> : error ? <div role="alert"><p>{error}</p><button type="button" className="btn-auth-outline" onClick={() => setRetry(previous => previous + 1)}>Try again</button></div> : friends.length ? <div className="friend-list">{friends.map(friend => <FriendCard key={friend._id} friend={friend} />)}</div> : <p>No partners available yet.</p>}
+      {loading ? <Loader /> : error ? <div role="alert"><p>{error}</p><button type="button" className="btn-auth-outline" onClick={() => setRetry(previous => previous + 1)}>Try again</button></div> : friends.length ? <div className="friend-list">{friends.map(friend => <FriendCard key={friend._id} friend={friend} />)}</div> : <p>No partners available yet.</p>}
     </main>
   </div>;
 }

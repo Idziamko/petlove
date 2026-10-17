@@ -18,6 +18,8 @@ import Title from './Title';
 import NoticeFilters, { type NoticeFiltersValue } from './NoticeFilters';
 import Pagination from './Pagination';
 import Icon from './Icon';
+import MobileMenu from './MobileMenu';
+import Loader from './Loader';
 import PetBlock from './PetBlock';
 import { AppStoreProvider, useAppStore } from './store';
 import { petNoticeFromApi, userProfileFromApi, type PetNotice } from './models';
@@ -46,6 +48,11 @@ function HeaderBar({ variant = 'standard' }: HeaderBarProps) {
   React.useEffect(() => {
     setMenuOpen(false);
   }, [location.pathname]);
+  React.useEffect(() => {
+    const closeOnDesktop = () => { if (window.innerWidth >= 1280) setMenuOpen(false); };
+    window.addEventListener('resize', closeOnDesktop);
+    return () => window.removeEventListener('resize', closeOnDesktop);
+  }, []);
 
   React.useEffect(() => {
     if (!logoutOpen) return;
@@ -99,21 +106,21 @@ function HeaderBar({ variant = 'standard' }: HeaderBarProps) {
             Our friends
           </NavLink>
         </nav>
-        <div className="desktop-auth-actions">
+        <div className={`desktop-auth-actions${currentUser ? ' signed-in-actions' : ''}`}>
           {currentUser ? (
             <div className="logged-user-cluster">
               <Link to="/profile" className="user-profile-chip" title="View profile">
                 {currentUser.avatar ? (
                   <img src={currentUser.avatar} alt={currentUser.name} className="user-chip-avatar" />
                 ) : (
-                  <span className="user-chip-initial">{currentUser.name.charAt(0)}</span>
+                  <img src={`${import.meta.env.BASE_URL}icons/user-circle.svg`} alt="" className="user-chip-avatar" />
                 )}
                 <span className="user-chip-name">{currentUser.name.split(' ')[0]}</span>
               </Link>
               <button
                 type="button"
                 onClick={() => setLogoutOpen(true)}
-                className="btn-auth-outline"
+                className="header-logout"
                 aria-label="Log out of account"
               >
                 LOG OUT
@@ -141,82 +148,7 @@ function HeaderBar({ variant = 'standard' }: HeaderBarProps) {
           <Icon name="menu-tablet" className="menu-icon-tablet" />
         </button>
       </div>
-      {menuOpen && (
-        <div className="mobile-drawer-backdrop" onClick={() => setMenuOpen(false)}>
-          <div
-            className="mobile-drawer-sheet"
-            onClick={(e) => e.stopPropagation()}
-            role="dialog"
-            aria-label="Mobile Navigation"
-          >
-            <div className="drawer-top-bar">
-              <Link to="/home" className="site-brand" onClick={() => setMenuOpen(false)}>
-                <span>petl</span><img src={`${import.meta.env.BASE_URL}icons/heart.svg`} alt="" className="brand-heart" /><span>ve</span>
-              </Link>
-              <button
-                type="button"
-                className="drawer-close-btn"
-                onClick={() => setMenuOpen(false)}
-                aria-label="Close drawer"
-              >
-                ✕
-              </button>
-            </div>
-
-            <nav className="mobile-drawer-links">
-              <NavLink
-                to="/news"
-                className={({ isActive }) => `drawer-nav-item ${isActive ? 'item-active' : ''}`}
-              >
-                News
-              </NavLink>
-              <NavLink
-                to="/notices"
-                className={({ isActive }) => `drawer-nav-item ${isActive ? 'item-active' : ''}`}
-              >
-                Find pet
-              </NavLink>
-              <NavLink
-                to="/friends"
-                className={({ isActive }) => `drawer-nav-item ${isActive ? 'item-active' : ''}`}
-              >
-                Our friends
-              </NavLink>
-            </nav>
-
-            <div className="drawer-footer-actions">
-              {currentUser ? (
-                <>
-                  <Link
-                    to="/profile"
-                    className="drawer-user-card"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    <span className="user-chip-initial">{currentUser.name.charAt(0)}</span>
-                    <span className="drawer-user-name">{currentUser.name}</span>
-                  </Link>
-                  <button
-                    type="button"
-                    onClick={() => setLogoutOpen(true)}
-                    className="btn-primary-filled full-width"
-                  >
-                    LOG OUT
-                  </button>
-                </>
-              ) : (
-                <div className="drawer-auth-buttons">
-                  <Link to="/login" className="btn-auth-solid text-center">
-                    LOG IN
-                  </Link>
-                  <Link to="/register" className="btn-auth-outline text-center">
-                    REGISTRATION
-                  </Link>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+      {menuOpen && <MobileMenu white={isHero} signedIn={Boolean(currentUser)} onClose={() => setMenuOpen(false)} onLogout={() => setLogoutOpen(true)} />}
 
       {logoutOpen && (
         <div className="modal-dialog-overlay" onClick={() => setLogoutOpen(false)}>
@@ -617,10 +549,7 @@ function NoticesPage() {
         <Title className="page-headline-title">Find your favorite pet</Title>
         <NoticeFilters value={filters} onChange={next => { setFilters(next); setPage(1); }} />
         {isLoading ? (
-          <div className="state-empty-box" role="status">
-            <span className="state-empty-symbol">⏳</span>
-            <h2 className="state-empty-title">Loading pet notices…</h2>
-          </div>
+          <Loader />
         ) : loadError ? (
           <div className="state-empty-box" role="alert">
             <span className="state-empty-symbol">⚠️</span>

@@ -1,0 +1,32 @@
+.menu-backdrop { position: fixed; inset: 0; z-index: 1000; display: flex; justify-content: flex-end; }
+.menu-panel { position: relative; width: 218px; height: 100%; overflow-y: auto; background: #f6b83d; color: white; }
+.menu-close { position: absolute; right: 20px; top: 28px; width: 32px; height: 32px; padding: 0; }
+.menu-close-mobile { display: block; width: 32px; height: 32px; }
+.menu-close-tablet { display: none; }
+.menu-links { position: absolute; top: calc(50% - 170px); left: calc(50% + .5px); transform: translateX(-50%); display: flex; flex-direction: column; gap: 10px; }
+.menu-link { display: grid; place-items: center; width: 119px; height: 48px; border: 1px solid rgb(255 255 255 / 15%); border-radius: 30px; font-size: 14px; line-height: 18px; font-weight: 500; letter-spacing: -.42px; }
+.menu-link-active { border-color: rgb(255 255 255 / 50%); }
+.menu-actions { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 8px; }
+.menu-actions a, .menu-actions button { display: grid; place-items: center; width: 178px; height: 42px; border-radius: 30px; font-size: 14px; line-height: 18px; font-weight: 700; letter-spacing: -.42px; }
+.menu-login { border: 1px solid rgb(255 255 255 / 50%); color: white; }
+.menu-registration { background: #fff4df; color: #f6b83d; }
+.menu-registration:hover { background: #fbe7c1; }
+.menu-login:hover { background: #fff4df; color: #f6b83d; }
+.menu-panel-white { background: white; color: #262626; }
+.menu-panel-white .menu-link { border-color: rgb(38 38 38 / 40%); }
+.menu-panel-white .menu-link-active { border-color: #f6b83d; }
+.menu-panel-white .menu-login { background: #f6b83d; color: white; border-color: transparent; }
+.menu-panel-white .menu-login:hover { background: #f9b020; }
+@media (min-width: 768px) {
+  .menu-panel { width: 374px; }
+  .menu-close { top: 39px; right: 32px; width: 36px; height: 36px; }
+  .menu-close-mobile { display: none; }
+  .menu-close-tablet { display: block; width: 36px; height: 36px; }
+  .menu-links { top: calc(50% - 143px); left: 50%; }
+  .menu-link { width: 120px; height: 50px; font-size: 16px; line-height: 20px; letter-spacing: -.48px; border-color: rgb(255 255 255 / 40%); }
+  .menu-link-active { border-color: white; }
+  .menu-actions { flex-direction: row; }
+  .menu-actions a, .menu-actions button { width: 119px; height: 50px; font-size: 16px; line-height: 20px; letter-spacing: -.48px; }
+  .menu-actions .menu-registration { width: 149px; }
+  .menu-login { border-color: white; }
+}
