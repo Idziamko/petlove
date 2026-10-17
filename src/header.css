@@ -143,7 +143,7 @@
   .header-standard-mode .site-brand { font-weight: 700; }
 }
 
-.nav-link-pill:hover { border-color: #f6b83d; }
+.nav-link-pill:hover { border-color: #f6b83d; background: transparent; }
 .guest-action-cluster .btn-auth-solid:hover { background: #f9b020; }
 .guest-action-cluster .btn-auth-outline:hover { background: #fbe7c1; }
 .home-hero .guest-action-cluster .btn-auth-solid:hover { background: #fff4df; color: #f6b83d; border-color: transparent; }
