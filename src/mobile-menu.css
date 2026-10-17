@@ -13,6 +13,8 @@
 .menu-registration:hover { background: #fbe7c1; }
 .menu-login:hover { background: #fff4df; color: #f6b83d; }
 .menu-panel-white { background: white; color: #262626; }
+.menu-panel-white .menu-close-mobile,
+.menu-panel-white .menu-close-tablet { filter: invert(1); }
 .menu-panel-white .menu-link { border-color: rgb(38 38 38 / 40%); }
 .menu-panel-white .menu-link-active { border-color: #f6b83d; }
 .menu-panel-white .menu-login { background: #f6b83d; color: white; border-color: transparent; }

@@ -34,6 +34,50 @@ import {
 } from './api';
 const EMAIL_PATTERN = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
 
+function useDialogA11y(open: boolean, dialogRef: React.RefObject<HTMLElement | null>, onClose: () => void) {
+  const closeRef = React.useRef(onClose);
+  const previousFocusRef = React.useRef<HTMLElement | null>(null);
+  closeRef.current = onClose;
+
+  React.useEffect(() => {
+    if (!open) return;
+    const dialog = dialogRef.current;
+    previousFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const getFocusable = () => dialog ? Array.from(dialog.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    )) : [];
+    const focusFirst = () => getFocusable()[0]?.focus();
+    focusFirst();
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        closeRef.current();
+        return;
+      }
+      if (event.key !== 'Tab') return;
+      const focusable = getFocusable();
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = previousOverflow;
+      previousFocusRef.current?.focus();
+    };
+  }, [dialogRef, open]);
+}
+
 interface HeaderBarProps {
   variant?: 'hero' | 'standard';
 }
@@ -43,6 +87,7 @@ function HeaderBar({ variant = 'standard' }: HeaderBarProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
   const [logoutError, setLogoutError] = useState<string | null>(null);
+  const logoutDialogRef = React.useRef<HTMLDivElement>(null);
   const location = useLocation();
   const navigate = useNavigate();
   React.useEffect(() => {
@@ -54,14 +99,7 @@ function HeaderBar({ variant = 'standard' }: HeaderBarProps) {
     return () => window.removeEventListener('resize', closeOnDesktop);
   }, []);
 
-  React.useEffect(() => {
-    if (!logoutOpen) return;
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setLogoutOpen(false);
-    };
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [logoutOpen]);
+  useDialogA11y(logoutOpen, logoutDialogRef, () => setLogoutOpen(false));
   React.useEffect(() => {
     const openProfileLogout = () => setLogoutOpen(true);
     window.addEventListener('petlove:profile-logout', openProfileLogout);
@@ -158,7 +196,8 @@ function HeaderBar({ variant = 'standard' }: HeaderBarProps) {
       {logoutOpen && (
         <div className="modal-dialog-overlay" onClick={() => setLogoutOpen(false)}>
           <div
-            className="attention-modal-card"
+            ref={logoutDialogRef}
+            className="attention-modal-card logout-modal-card"
             onClick={(event) => event.stopPropagation()}
             role="dialog"
             aria-modal="true"
@@ -170,7 +209,7 @@ function HeaderBar({ variant = 'standard' }: HeaderBarProps) {
               onClick={() => setLogoutOpen(false)}
               aria-label="Close logout confirmation"
             >
-              ✕
+              <img src={`${import.meta.env.BASE_URL}icons/modal-close.svg`} alt="" />
             </button>
             <h2 className="state-empty-title">Log out of Petlove?</h2>
             <p className="state-empty-desc">Your local session will be cleared from this device.</p>
@@ -480,6 +519,8 @@ function NoticesPage() {
   const [authPromptOpen, setAuthPromptOpen] = useState(false);
   const [detailError, setDetailError] = useState('');
   const [loadingNoticeId, setLoadingNoticeId] = useState('');
+  const detailDialogRef = React.useRef<HTMLDivElement>(null);
+  const authDialogRef = React.useRef<HTMLDivElement>(null);
 
   const openNotice = async (pet: PetNotice) => {
     if (!currentUser) {
@@ -499,17 +540,8 @@ function NoticesPage() {
     }
   };
 
-  React.useEffect(() => {
-    if (!authPromptOpen && !focusedPet) return;
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setAuthPromptOpen(false);
-        setFocusedPet(null);
-      }
-    };
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [authPromptOpen, focusedPet]);
+  useDialogA11y(Boolean(focusedPet), detailDialogRef, () => setFocusedPet(null));
+  useDialogA11y(authPromptOpen, authDialogRef, () => setAuthPromptOpen(false));
 
   const [locations, setLocations] = useState<Record<string, string>>({});
   React.useEffect(() => {
@@ -643,6 +675,7 @@ function NoticesPage() {
         {focusedPet && (
           <div className="modal-dialog-overlay" onClick={() => setFocusedPet(null)}>
             <div
+              ref={detailDialogRef}
               className="pet-detail-modal-card"
               onClick={(e) => e.stopPropagation()}
               role="dialog"
@@ -655,7 +688,7 @@ function NoticesPage() {
                 onClick={() => setFocusedPet(null)}
                 aria-label="Close modal dialog"
               >
-                ✕
+                <img src={`${import.meta.env.BASE_URL}icons/modal-close.svg`} alt="" />
               </button>
 
               <div className="modal-content-split">
@@ -725,6 +758,7 @@ function NoticesPage() {
         {authPromptOpen && (
           <div className="modal-dialog-overlay" onClick={() => setAuthPromptOpen(false)}>
             <div
+              ref={authDialogRef}
               className="attention-modal-card"
               onClick={(event) => event.stopPropagation()}
               role="dialog"
@@ -737,14 +771,23 @@ function NoticesPage() {
                 onClick={() => setAuthPromptOpen(false)}
                 aria-label="Close authentication prompt"
               >
-                ✕
+                <img src={`${import.meta.env.BASE_URL}icons/modal-close.svg`} alt="" />
               </button>
-              <span className="state-empty-symbol">🔒</span>
-              <h2 className="state-empty-title">Sign in to continue</h2>
-              <p className="state-empty-desc">Create an account or log in to save favorites and view full pet details.</p>
-              <div className="auth-buttons-inline">
-                <Link to="/login" className="btn-primary-filled" onClick={() => setAuthPromptOpen(false)}>LOG IN</Link>
-                <Link to="/register" className="btn-auth-outline" onClick={() => setAuthPromptOpen(false)}>REGISTRATION</Link>
+              <div className="attention-modal-content">
+                <div className="attention-modal-icon">
+                  <img src={`${import.meta.env.BASE_URL}icons/modal-emoji-circle.svg`} alt="" />
+                  <span aria-hidden="true">🐶</span>
+                </div>
+                <div className="attention-modal-copy">
+                  <div className="attention-modal-text">
+                    <h2>Attention</h2>
+                    <p>We would like to remind you that certain functionality is available only to authorized users. If you have an account, please log in with your credentials. If you do not already have an account, you must register to access these features.</p>
+                  </div>
+                  <div className="auth-buttons-inline">
+                    <Link to="/login" className="btn-primary-filled" onClick={() => setAuthPromptOpen(false)}>LOG IN</Link>
+                    <Link to="/register" className="btn-auth-outline" onClick={() => setAuthPromptOpen(false)}>REGISTRATION</Link>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

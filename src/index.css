@@ -1511,17 +1511,18 @@ img {
   position: absolute;
   top: 16px;
   right: 16px;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: var(--color-white);
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   z-index: 10;
 }
+
+.modal-dismiss-btn img { width: 24px; height: 24px; }
 
 .modal-content-split {
   display: grid;
@@ -1660,12 +1661,175 @@ img {
 
 .attention-modal-card {
   position: relative;
-  width: min(480px, calc(100vw - 32px));
-  padding: 44px 32px 32px;
-  border-radius: var(--radius-card-desktop);
+  width: min(466px, calc(100vw - 40px));
+  min-height: 434px;
+  padding: 0;
+  border-radius: 30px;
   background: var(--color-white);
-  box-shadow: 0 24px 80px rgba(38, 38, 38, 0.18);
+  box-shadow: 0 24px 80px rgba(38, 38, 38, 0.12);
   text-align: center;
+}
+
+.attention-modal-card > .modal-dismiss-btn { top: 20px; right: 20px; }
+
+.attention-modal-content {
+  position: absolute;
+  top: 60px;
+  left: 50%;
+  width: 346px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.attention-modal-icon {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  flex: 0 0 auto;
+}
+
+.attention-modal-icon img { width: 80px; height: 80px; }
+
+.attention-modal-icon span {
+  position: absolute;
+  inset: 18px;
+  display: grid;
+  place-items: center;
+  color: var(--color-white);
+  font-size: 44px;
+  line-height: 44px;
+}
+
+.attention-modal-copy {
+  width: 346px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+
+.attention-modal-text {
+  width: 346px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.attention-modal-text > h2 {
+  margin: 0;
+  color: var(--color-primary);
+  font-size: 24px;
+  line-height: 28px;
+  font-weight: 700;
+  letter-spacing: -0.72px;
+}
+
+.attention-modal-text > p {
+  width: 346px;
+  margin: 0;
+  color: var(--color-dark);
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 500;
+  letter-spacing: -0.28px;
+  text-align: center;
+}
+
+.attention-modal-copy .auth-buttons-inline {
+  width: 288px;
+  gap: 8px;
+}
+
+.attention-modal-copy .auth-buttons-inline a {
+  width: 140px;
+  height: 48px;
+  padding: 14px 10px;
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: -0.48px;
+}
+
+.logout-modal-card {
+  width: min(448px, calc(100vw - 40px));
+  min-height: 364px;
+}
+
+.logout-modal-card .state-empty-title { margin-top: 102px; }
+
+.logout-modal-card .state-empty-desc { margin: 14px auto 28px; max-width: 288px; }
+
+.logout-modal-card .auth-buttons-inline { justify-content: center; gap: 8px; }
+
+.logout-modal-card .auth-buttons-inline button {
+  width: 140px;
+  height: 48px;
+  padding: 14px 10px;
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: -0.48px;
+}
+
+@media (max-width: 767px) {
+  .attention-modal-card {
+    width: 335px;
+    min-height: 394px;
+  }
+
+  .attention-modal-content {
+    top: 40px;
+    width: 295px;
+  }
+
+  .attention-modal-copy,
+  .attention-modal-text,
+  .attention-modal-text > p { width: 295px; }
+
+  .attention-modal-copy { gap: 20px; }
+
+  .attention-modal-text > h2 {
+    color: var(--color-dark);
+    font-size: 20px;
+    line-height: 20px;
+    letter-spacing: -0.4px;
+  }
+
+  .attention-modal-copy > p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 18px;
+  }
+
+  .attention-modal-copy .auth-buttons-inline { width: 272px; }
+
+  .attention-modal-copy .auth-buttons-inline a {
+    width: 135px;
+    height: 42px;
+    padding: 12px 8px;
+    font-size: 14px;
+    line-height: 18px;
+    letter-spacing: -0.42px;
+  }
+
+  .logout-modal-card {
+    width: 335px;
+    min-height: 270px;
+  }
+
+  .logout-modal-card .state-empty-title { margin-top: 88px; }
+
+  .logout-modal-card .state-empty-desc { margin-bottom: 20px; }
+
+  .logout-modal-card .auth-buttons-inline button {
+    width: 137px;
+    height: 42px;
+    padding: 12px 8px;
+    font-size: 14px;
+    line-height: 18px;
+  }
 }
 
 @media (max-width: 1024px) {
