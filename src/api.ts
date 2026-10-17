@@ -159,7 +159,9 @@ client.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
+      const hadToken = localStorage.getItem(AUTH_TOKEN_KEY);
       localStorage.removeItem(AUTH_TOKEN_KEY);
+      if (hadToken) window.dispatchEvent(new Event('petlove:session-expired'));
     }
     return Promise.reject(error);
   },
@@ -243,8 +245,8 @@ export function getStoredToken() {
 export function getApiErrorMessage(error: unknown, fallback = 'Something went wrong. Please try again.') {
   if (axios.isAxiosError(error)) {
     const status = error.response?.status;
-    if (status === 401) return 'Email or password is invalid.';
-    if (status === 409) return 'This email is already registered.';
+    if (status === 401) return error.config?.url === '/users/signin' ? 'Email or password is invalid.' : 'Your session has expired. Please log in again.';
+    if (status === 409 && error.config?.url === '/users/signup') return 'This email is already registered.';
     if (status === 400) return 'Please check the entered data.';
     if (error.response?.data?.message && typeof error.response.data.message === 'string') {
       return error.response.data.message;

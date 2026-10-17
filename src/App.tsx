@@ -1,4 +1,4 @@
-import React, { useState, useMemo, createContext, useContext } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Routes,
   Route,
@@ -11,182 +11,25 @@ import {
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import HomePage from './HomePage';
+import NewsPage from './NewsPage';
+import NoticeFilters, { type NoticeFiltersValue } from './NoticeFilters';
+import Pagination from './Pagination';
+import Icon from './Icon';
 import PetBlock from './PetBlock';
+import { AppStoreProvider, useAppStore } from './store';
+import { petNoticeFromApi, shelterFriendFromApi, userProfileFromApi, type PetNotice, type ShelterFriend } from './models';
 import {
   authApi,
   citiesApi,
   friendsApi,
   getApiErrorMessage,
-  getStoredToken,
-  newsApi,
   noticesApi,
   usersApi,
-  type Friend,
-  type NewsItem,
-  type Notice,
-  type CurrentUser,
   type NoticeSex,
   type NoticeSpecies,
 } from './api';
-interface UserProfile {
-  name: string;
-  email: string;
-  phone: string;
-  avatar: string;
-}
-
-interface PetNotice {
-  id: string;
-  title: string;
-  name: string;
-  species: 'dog' | 'cat' | 'bird' | 'other';
-  category: 'found' | 'free' | 'sell';
-  gender: 'female' | 'male';
-  birthday: string;
-  location: string;
-  rating: number;
-  imageUrl: string;
-  description: string;
-  price?: string;
-}
-
-interface NewsStory {
-  id: string;
-  title: string;
-  snippet: string;
-  category: string;
-  date: string;
-  imageUrl: string;
-  url?: string;
-}
-
-interface ShelterFriend {
-  id: string;
-  name: string;
-  status: string;
-  time: string;
-  address: string;
-  addressUrl?: string;
-  url?: string;
-  email: string;
-  phone: string;
-  imageUrl: string;
-}
-
-interface UserPetRecord {
-  id: string;
-  name: string;
-  species: string;
-  birthday: string;
-  sex: string;
-  comments: string;
-  imageUrl: string;
-}
-
-interface AppStoreContextType {
-  currentUser: UserProfile | null;
-  setCurrentUser: React.Dispatch<React.SetStateAction<UserProfile | null>>;
-  favoriteIds: string[];
-  toggleFavorite: (id: string) => void;
-  userPets: UserPetRecord[];
-  addUserPet: (pet: Omit<UserPetRecord, 'id'>) => void;
-  removeUserPet: (id: string) => void;
-  clearPrivateData: () => void;
-}
-
 const EMAIL_PATTERN = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
 
-function petNoticeFromApi(notice: Notice, locationNames: Record<string, string> = {}): PetNotice {
-  const location = typeof notice.location === 'string'
-    ? locationNames[notice.location] || notice.location
-    : `${notice.location.cityEn}, ${notice.location.stateEn}`;
-  const species = notice.species === 'dog' || notice.species === 'cat' || notice.species === 'bird'
-    ? notice.species
-    : 'other';
-  const category = notice.category === 'sell'
-    ? 'sell'
-    : notice.category === 'found' || notice.category === 'lost'
-      ? 'found'
-      : 'free';
-  const gender = notice.sex === 'female' ? 'female' : 'male';
-
-  return {
-    id: notice._id,
-    title: notice.title,
-    name: notice.name,
-    species,
-    category,
-    gender,
-    birthday: notice.birthday,
-    location,
-    rating: Number(notice.popularity) || 0,
-    imageUrl: notice.imageUrl || notice.imgURL || notice.imgUrl || `${import.meta.env.BASE_URL}images/home.webp`,
-    description: notice.comment,
-    price: typeof notice.price === 'number' ? `$${notice.price}` : undefined,
-  };
-}
-
-function newsStoryFromApi(item: NewsItem): NewsStory {
-  return {
-    id: item._id,
-    title: item.title,
-    snippet: item.text,
-    category: 'Guidance',
-    date: item.date,
-    imageUrl: item.imgUrl,
-    url: item.url,
-  };
-}
-
-function shelterFriendFromApi(friend: Friend): ShelterFriend {
-  const openDay = friend.workDays?.find((day) => day.isOpen);
-  return {
-    id: friend._id,
-    name: friend.title,
-    status: 'Verified partner',
-    time: openDay ? `${openDay.from || ''} – ${openDay.to || ''}`.trim() : 'By appointment',
-    address: friend.address || 'Address unavailable',
-    addressUrl: friend.addressUrl || undefined,
-    url: friend.url,
-    email: friend.email || '',
-    phone: friend.phone || '',
-    imageUrl: friend.imageUrl,
-  };
-}
-
-function userPetsFromApi(pets: CurrentUser['pets'] = []): UserPetRecord[] {
-  return pets.map((pet) => ({
-    id: pet._id,
-    name: pet.name,
-    species: pet.species,
-    birthday: pet.birthday,
-    sex: pet.sex,
-    comments: pet.title,
-    imageUrl: pet.imgURL,
-  }));
-}
-
-function uniqueById<T extends { id: string }>(items: T[]): T[] {
-  return Array.from(new Map(items.map((item) => [item.id, item])).values());
-}
-const AppStoreContext = createContext<AppStoreContextType | null>(null);
-
-function useAppStore() {
-  const context = useContext(AppStoreContext);
-  if (!context) {
-    throw new Error('useAppStore must be accessed within AppStoreProvider');
-  }
-  return context;
-}
-
-function userProfileFromApi(user: { name: string; email: string; phone?: string; avatar?: string }): UserProfile {
-  return {
-    name: user.name,
-    email: user.email,
-    phone: user.phone || '',
-    avatar: user.avatar || '',
-  };
-}
 interface HeaderBarProps {
   variant?: 'hero' | 'standard';
 }
@@ -405,7 +248,7 @@ function HeaderBar({ variant = 'standard' }: HeaderBarProps) {
   );
 }
 function LoginPage() {
-  const { setCurrentUser } = useAppStore();
+  const { currentUser, refreshUser } = useAppStore();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [bannerMessage, setBannerMessage] = useState<string | null>(null);
@@ -418,6 +261,8 @@ function LoginPage() {
       .min(7, 'Password must be at least 7 characters')
       .required('Password is required'),
   });
+
+  if (currentUser) return <Navigate to="/profile" replace />;
 
   return (
     <div className="layout-page-container standard-page-layout auth-page">
@@ -444,15 +289,10 @@ function LoginPage() {
             validationSchema={validationSchema}
             onSubmit={async (values, { setSubmitting, setStatus }) => {
               try {
-                const response = await authApi.signIn(values);
-                setCurrentUser({
-                  name: response.name,
-                  email: response.email,
-                  phone: '',
-                  avatar: ''
-                });
+                await authApi.signIn(values);
+                await refreshUser();
                 setBannerMessage('Signed in successfully! Redirecting to your dashboard...');
-                window.setTimeout(() => navigate('/profile'), 600);
+                navigate('/profile', { replace: true });
               } catch (error) {
                 setStatus(getApiErrorMessage(error, 'Unable to sign in right now.'));
               } finally {
@@ -530,7 +370,7 @@ function LoginPage() {
   );
 }
 function RegisterPage() {
-  const { setCurrentUser } = useAppStore();
+  const { currentUser, refreshUser } = useAppStore();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [bannerMessage, setBannerMessage] = useState<string | null>(null);
@@ -549,6 +389,8 @@ function RegisterPage() {
       .oneOf([Yup.ref('password')], 'Passwords must match')
       .required('Please confirm your password'),
   });
+
+  if (currentUser) return <Navigate to="/profile" replace />;
 
   return (
     <div className="layout-page-container standard-page-layout auth-page register-page">
@@ -575,19 +417,14 @@ function RegisterPage() {
             validationSchema={registrationSchema}
             onSubmit={async (values, { setSubmitting, setStatus }) => {
               try {
-                const response = await authApi.signUp({
+                await authApi.signUp({
                   name: values.name,
                   email: values.email,
                   password: values.password
                 });
-                setCurrentUser({
-                  name: response.name,
-                  email: response.email,
-                  phone: '',
-                  avatar: ''
-                });
+                await refreshUser();
                 setBannerMessage('Account created successfully! Redirecting...');
-                window.setTimeout(() => navigate('/profile'), 600);
+                navigate('/profile', { replace: true });
               } catch (error) {
                 setStatus(getApiErrorMessage(error, 'Unable to create the account right now.'));
               } finally {
@@ -692,179 +529,10 @@ function RegisterPage() {
     </div>
   );
 }
-function NewsPage() {
-  const [query, setQuery] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('All');
-  const [stories, setStories] = useState<NewsStory[]>([]);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [isLoading, setIsLoading] = useState(true);
-  const [loadError, setLoadError] = useState<string | null>(null);
-
-  const categories = ['All', 'Guidance'];
-
-  React.useEffect(() => {
-    setPage(1);
-  }, [query]);
-
-  React.useEffect(() => {
-    let isActive = true;
-    setIsLoading(true);
-    setLoadError(null);
-    newsApi.list({ keyword: query.trim() || undefined, page, limit: 6 })
-      .then((response) => {
-        if (!isActive) return;
-        const nextStories = response.results.map(newsStoryFromApi);
-        setStories((previous) => uniqueById(page === 1 ? nextStories : [...previous, ...nextStories]));
-        setTotalPages(response.totalPages || 1);
-      })
-      .catch((error) => {
-        if (isActive) setLoadError(getApiErrorMessage(error, 'Unable to load news right now.'));
-      })
-      .finally(() => {
-        if (isActive) setIsLoading(false);
-      });
-
-    return () => {
-      isActive = false;
-    };
-  }, [query, page]);
-
-  const filteredNews = categoryFilter === 'All'
-    ? stories
-    : stories.filter((item) => item.category === categoryFilter);
-
-  return (
-    <div className="layout-page-container standard-page-layout">
-      <HeaderBar />
-
-      <main className="content-readable-area">
-        <header className="page-header-row">
-          <div>
-            <h1 className="page-headline-title">News</h1>
-            <p className="page-subline-text">
-              Expert advice, heartwarming rescue stories, and veterinary updates.
-            </p>
-          </div>
-
-          <div className="search-pill-field">
-            <span className="search-magnifier-symbol">⌕</span>
-            <input
-              type="text"
-              placeholder="Search news articles..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="search-inner-input"
-              aria-label="Search news articles"
-            />
-            {query && (
-              <button
-                type="button"
-                className="search-reset-cross"
-                onClick={() => setQuery('')}
-                aria-label="Clear news search"
-              >
-                ✕
-              </button>
-            )}
-          </div>
-        </header>
-        <div className="filter-pill-scroller" role="tablist" aria-label="Topic filters">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              type="button"
-              className={`filter-selector-pill ${categoryFilter === cat ? 'active' : ''}`}
-              onClick={() => setCategoryFilter(cat)}
-              role="tab"
-              aria-selected={categoryFilter === cat}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-        {isLoading && stories.length === 0 ? (
-          <div className="state-empty-box" role="status">
-            <span className="state-empty-symbol">⏳</span>
-            <h2 className="state-empty-title">Loading news…</h2>
-          </div>
-        ) : loadError && stories.length === 0 ? (
-          <div className="state-empty-box" role="alert">
-            <span className="state-empty-symbol">⚠️</span>
-            <h2 className="state-empty-title">Unable to load news</h2>
-            <p className="state-empty-desc">{loadError}</p>
-            <button type="button" onClick={() => setPage(1)} className="btn-primary-filled">Try again</button>
-          </div>
-        ) : filteredNews.length > 0 ? (
-          <>
-            <div className="news-grid-layout">
-              {filteredNews.map((story) => (
-                <article key={story.id} className="news-story-card">
-                  <div className="news-media-frame">
-                    <img src={story.imageUrl} alt={story.title} className="news-cover-photo" />
-                    <span className="news-category-label">{story.category}</span>
-                  </div>
-                  <div className="news-body-frame">
-                    <h2 className="news-article-title">{story.title}</h2>
-                    <p className="news-article-snippet">{story.snippet}</p>
-                    <div className="news-meta-row">
-                      <time className="news-published-date">{story.date}</time>
-                      <a
-                        href={story.url || '#'}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="news-read-more-link"
-                      >
-                        Read more →
-                      </a>
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
-
-            {page < totalPages && (
-              <div className="load-more-wrapper">
-                <button
-                  type="button"
-                  onClick={() => setPage((previous) => previous + 1)}
-                  disabled={isLoading}
-                  className="btn-auth-outline"
-                >
-                  {isLoading ? 'Loading articles...' : 'Load more news'}
-                </button>
-              </div>
-            )}
-          </>
-        ) : (
-          <div className="state-empty-box">
-            <span className="state-empty-symbol">📰</span>
-            <h2 className="state-empty-title">No news articles found</h2>
-            <p className="state-empty-desc">
-              We couldn&apos;t find matching articles for &ldquo;{query}&rdquo;. Try another topic.
-            </p>
-            <button
-              type="button"
-              onClick={() => {
-                setQuery('');
-                setCategoryFilter('All');
-              }}
-              className="btn-primary-filled"
-            >
-              Reset filters
-            </button>
-          </div>
-        )}
-      </main>
-    </div>
-  );
-}
 function NoticesPage() {
-  const { currentUser, favoriteIds, toggleFavorite } = useAppStore();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [categoryTab, setCategoryTab] = useState<'all' | 'free' | 'sell' | 'found'>('all');
-  const [speciesChoice, setSpeciesChoice] = useState('all');
-  const [genderChoice, setGenderChoice] = useState('all');
+  const { currentUser, favoriteIds, toggleFavorite, refreshUser } = useAppStore();
+  const [filters, setFilters] = useState<NoticeFiltersValue>({});
+  const [retry, setRetry] = useState(0);
   const [focusedPet, setFocusedPet] = useState<PetNotice | null>(null);
   const [notices, setNotices] = useState<PetNotice[]>([]);
   const [page, setPage] = useState(1);
@@ -872,6 +540,26 @@ function NoticesPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [authPromptOpen, setAuthPromptOpen] = useState(false);
+  const [detailError, setDetailError] = useState('');
+  const [loadingNoticeId, setLoadingNoticeId] = useState('');
+
+  const openNotice = async (pet: PetNotice) => {
+    if (!currentUser) {
+      setAuthPromptOpen(true);
+      return;
+    }
+    setLoadingNoticeId(pet.id);
+    setDetailError('');
+    try {
+      const notice = await noticesApi.byId(pet.id);
+      setFocusedPet(petNoticeFromApi(notice));
+      await refreshUser();
+    } catch (reason) {
+      setDetailError(getApiErrorMessage(reason, 'Unable to load this notice. Please try again.'));
+    } finally {
+      setLoadingNoticeId('');
+    }
+  };
 
   React.useEffect(() => {
     if (!authPromptOpen && !focusedPet) return;
@@ -885,172 +573,59 @@ function NoticesPage() {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [authPromptOpen, focusedPet]);
 
-  const categories: Array<{ id: 'all' | 'free' | 'sell' | 'found'; label: string }> = [
-    { id: 'all', label: 'Show all' },
-    { id: 'free', label: 'In good hands' },
-    { id: 'sell', label: 'For sale' },
-    { id: 'found', label: 'Lost / Found' },
-  ];
-
-  const speciesOptions = [
-    { value: 'all', label: 'All species' },
-    { value: 'dog', label: 'Dogs' },
-    { value: 'cat', label: 'Cats' },
-    { value: 'bird', label: 'Birds' },
-  ];
-
-  const genderOptions = [
-    { value: 'all', label: 'All genders' },
-    { value: 'female', label: 'Female' },
-    { value: 'male', label: 'Male' },
-  ];
+  const [locations, setLocations] = useState<Record<string, string>>({});
+  React.useEffect(() => {
+    let active = true;
+    citiesApi.locations().then(items => {
+      if (active) setLocations(Object.fromEntries(items.map(item => [item._id, `${item.cityEn}, ${item.stateEn}`])));
+    }).catch(() => {});
+    return () => { active = false; };
+  }, []);
 
   React.useEffect(() => {
-    setPage(1);
-  }, [searchTerm, categoryTab, speciesChoice, genderChoice]);
-
-  React.useEffect(() => {
-    let isActive = true;
+    let active = true;
     setIsLoading(true);
     setLoadError(null);
-    Promise.all([
-      noticesApi.list({
-        keyword: searchTerm.trim() || undefined,
-        category: categoryTab === 'all' ? undefined : categoryTab,
-        species: speciesChoice === 'all' ? undefined : speciesChoice,
-        sex: genderChoice === 'all' ? undefined : genderChoice,
-        byDate: true,
-        page,
-        limit: 6,
-      }),
-      citiesApi.locations().catch(() => []),
-    ])
-      .then(([response, locations]) => {
-        if (!isActive) return;
-        const locationNames = Object.fromEntries(
-          locations.map((location) => [location._id, `${location.cityEn}, ${location.stateEn}`]),
-        );
-        const nextNotices = response.results.map((notice) => petNoticeFromApi(notice, locationNames));
-        setNotices((previous) => uniqueById(page === 1 ? nextNotices : [...previous, ...nextNotices]));
-        setTotalPages(response.totalPages || 1);
-      })
-      .catch((error) => {
-        if (isActive) setLoadError(getApiErrorMessage(error, 'Unable to load pet notices right now.'));
-      })
-      .finally(() => {
-        if (isActive) setIsLoading(false);
-      });
-
-    return () => {
-      isActive = false;
-    };
-  }, [searchTerm, categoryTab, speciesChoice, genderChoice, page]);
+    noticesApi.list({
+      keyword: filters.keyword,
+      category: filters.category,
+      species: filters.species,
+      sex: filters.sex,
+      locationId: filters.locationId,
+      byPopularity: filters.sort === 'Popular' ? false : filters.sort === 'Unpopular' ? true : undefined,
+      byPrice: filters.sort === 'Cheap' ? true : filters.sort === 'Expensive' ? false : undefined,
+      page,
+      limit: 6,
+    }).then(response => {
+      if (!active) return;
+      setNotices(response.results.map(notice => petNoticeFromApi(notice, locations)));
+      setTotalPages(response.totalPages || 1);
+    }).catch(reason => {
+      if (active) setLoadError(getApiErrorMessage(reason, 'Unable to load pet notices right now.'));
+    }).finally(() => { if (active) setIsLoading(false); });
+    return () => { active = false; };
+  }, [filters, page, retry, locations]);
 
   const filteredNotices = notices;
 
   return (
-    <div className="layout-page-container standard-page-layout">
+    <div className="layout-page-container standard-page-layout notices-page">
       <HeaderBar />
 
       <main className="content-readable-area">
-        <header className="page-header-row">
-          <div>
-            <h1 className="page-headline-title">Find your favorite pet</h1>
-            <p className="page-subline-text">
-              Browse companions needing loving adoption, foster homes, or safe reunification.
-            </p>
-          </div>
-
-          <div className="search-pill-field">
-            <span className="search-magnifier-symbol">⌕</span>
-            <input
-              type="text"
-              placeholder="Search by name, district, breed..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-inner-input"
-              aria-label="Search pet notices"
-            />
-            {searchTerm && (
-              <button
-                type="button"
-                className="search-reset-cross"
-                onClick={() => setSearchTerm('')}
-                aria-label="Clear pet search"
-              >
-                ✕
-              </button>
-            )}
-          </div>
-        </header>
-        <section className="notices-filter-toolbar" aria-label="Search filters">
-          <div className="filter-pill-scroller">
-            {categories.map((c) => (
-              <button
-                key={c.id}
-                type="button"
-                className={`filter-selector-pill ${categoryTab === c.id ? 'active' : ''}`}
-                onClick={() => setCategoryTab(c.id)}
-              >
-                {c.label}
-              </button>
-            ))}
-          </div>
-
-          <div className="secondary-controls-row">
-            <div className="dropdown-pills-cluster">
-              <label htmlFor="notices-species-select" className="sr-only">Species</label>
-              <select
-                id="notices-species-select"
-                value={speciesChoice}
-                onChange={(e) => setSpeciesChoice(e.target.value)}
-                className="filter-select-control"
-              >
-                {speciesOptions.map((opt) => (
-                  <option key={opt.value} value={opt.value}>{opt.label}</option>
-                ))}
-              </select>
-
-              <label htmlFor="notices-gender-select" className="sr-only">Gender</label>
-              <select
-                id="notices-gender-select"
-                value={genderChoice}
-                onChange={(e) => setGenderChoice(e.target.value)}
-                className="filter-select-control"
-              >
-                {genderOptions.map((opt) => (
-                  <option key={opt.value} value={opt.value}>{opt.label}</option>
-                ))}
-              </select>
-            </div>
-
-            {(searchTerm || categoryTab !== 'all' || speciesChoice !== 'all' || genderChoice !== 'all') && (
-              <button
-                type="button"
-                onClick={() => {
-                  setSearchTerm('');
-                  setCategoryTab('all');
-                  setSpeciesChoice('all');
-                  setGenderChoice('all');
-                }}
-                className="reset-filters-button"
-              >
-                Clear all filters
-              </button>
-            )}
-          </div>
-        </section>
-        {isLoading && notices.length === 0 ? (
+        <h1 className="page-headline-title">Find your favorite pet</h1>
+        <NoticeFilters value={filters} onChange={next => { setFilters(next); setPage(1); }} />
+        {isLoading ? (
           <div className="state-empty-box" role="status">
             <span className="state-empty-symbol">⏳</span>
             <h2 className="state-empty-title">Loading pet notices…</h2>
           </div>
-        ) : loadError && notices.length === 0 ? (
+        ) : loadError ? (
           <div className="state-empty-box" role="alert">
             <span className="state-empty-symbol">⚠️</span>
             <h2 className="state-empty-title">Unable to load pet notices</h2>
             <p className="state-empty-desc">{loadError}</p>
-            <button type="button" onClick={() => setPage(1)} className="btn-primary-filled">Try again</button>
+            <button type="button" onClick={() => setRetry(previous => previous + 1)} className="btn-primary-filled">Try again</button>
           </div>
         ) : filteredNotices.length > 0 ? (
           <>
@@ -1061,9 +636,34 @@ function NoticesPage() {
                 <article key={pet.id} className="notice-pet-card">
                   <div className="notice-image-container">
                     <img src={pet.imageUrl} alt={pet.name} className="notice-main-photo" />
-                    <span className="notice-category-badge">
-                      {pet.category === 'free' ? 'In good hands' : pet.category === 'sell' ? 'For sale' : 'Found'}
-                    </span>
+
+                  </div>
+
+                  <div className="notice-content-body">
+                    <div className="notice-heading-row">
+                      <h2 className="notice-pet-name">{pet.title}</h2>
+                      <div className="notice-rating-chip">
+                        <Icon name="star" />
+                        <span>{pet.rating}</span>
+                      </div>
+                    </div>
+
+                    <div className="notice-spec-pills-row">
+                      {[['Name', pet.name], ['Birthday', pet.birthday ? pet.birthday.split('-').reverse().join('.') : 'Unknown'], ['Sex', pet.gender], ['Species', pet.species], ['Category', pet.category]].map(([label, value]) => <div className="spec-pill" key={label}><span className="spec-label">{label}</span><span className="spec-val">{value}</span></div>)}
+                    </div>
+
+                    <p className="notice-summary-desc">{pet.description}</p>
+
+                    <p className="notice-price">{pet.price || ''}</p>
+                    <div className="notice-action-row">
+                      <button
+                        type="button"
+                        onClick={() => openNotice(pet)}
+                        disabled={loadingNoticeId === pet.id}
+                        className="btn-primary-filled full-width"
+                      >
+                        {loadingNoticeId === pet.id ? 'Loading…' : 'Learn more'}
+                      </button>
                     <button
                       type="button"
                       onClick={() => {
@@ -1076,72 +676,15 @@ function NoticesPage() {
                       className={`notice-heart-button ${isFav ? 'is-fav' : ''}`}
                       aria-label={isFav ? 'Remove from favorites' : 'Add to favorites'}
                     >
-                      {isFav ? '♥' : '♡'}
+                      <Icon name="heart" />
                     </button>
-                  </div>
-
-                  <div className="notice-content-body">
-                    <div className="notice-heading-row">
-                      <h2 className="notice-pet-name">{pet.name}</h2>
-                      <div className="notice-rating-chip">
-                        <span className="star-symbol">★</span>
-                        <span>{pet.rating.toFixed(1)}</span>
-                      </div>
-                    </div>
-
-                    <div className="notice-spec-pills-row">
-                      <div className="spec-pill">
-                        <span className="spec-label">Species:</span>
-                        <span className="spec-val">{pet.species}</span>
-                      </div>
-                      <div className="spec-pill">
-                        <span className="spec-label">Sex:</span>
-                        <span className="spec-val">{pet.gender}</span>
-                      </div>
-                      <div className="spec-pill">
-                        <span className="spec-label">Birthday:</span>
-                        <span className="spec-val">{pet.birthday}</span>
-                      </div>
-                      <div className="spec-pill">
-                        <span className="spec-label">Location:</span>
-                        <span className="spec-val">{pet.location}</span>
-                      </div>
-                    </div>
-
-                    <p className="notice-summary-desc">{pet.description}</p>
-
-                    <div className="notice-action-row">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (!currentUser) {
-                            setAuthPromptOpen(true);
-                            return;
-                          }
-                          setFocusedPet(pet);
-                        }}
-                        className="btn-primary-filled full-width"
-                      >
-                        Learn more
-                      </button>
                     </div>
                   </div>
                 </article>
               );
             })}
           </div>
-          {page < totalPages && (
-            <div className="load-more-wrapper">
-              <button
-                type="button"
-                onClick={() => setPage((previous) => previous + 1)}
-                disabled={isLoading}
-                className="btn-auth-outline"
-              >
-                {isLoading ? 'Loading notices...' : 'Load more notices'}
-              </button>
-            </div>
-          )}
+          <Pagination page={page} totalPages={totalPages} disabled={isLoading} onChange={next => { setPage(next); window.scrollTo({ top: 0, behavior: 'smooth' }); }} />
           </>
         ) : (
           <div className="state-empty-box">
@@ -1153,10 +696,8 @@ function NoticesPage() {
             <button
               type="button"
               onClick={() => {
-                setSearchTerm('');
-                setCategoryTab('all');
-                setSpeciesChoice('all');
-                setGenderChoice('all');
+                setFilters({});
+                setPage(1);
               }}
               className="btn-primary-filled"
             >
@@ -1235,12 +776,9 @@ function NoticesPage() {
                     >
                       {favoriteIds.includes(focusedPet.id) ? '♥ Favorited' : '♡ Add to favorites'}
                     </button>
-                    <a
-                      href={`mailto:adoption@petlove.org?subject=Inquiry regarding ${focusedPet.name}`}
-                      className="btn-primary-filled"
-                    >
-                      Contact shelter
-                    </a>
+                    {focusedPet.contact ? (
+                      <a href={focusedPet.contact} className="btn-primary-filled">Contact</a>
+                    ) : <span>Contact details are not provided.</span>}
                   </div>
                 </div>
               </div>
@@ -1248,6 +786,7 @@ function NoticesPage() {
           </div>
         )}
 
+        {detailError && <p role="alert" className="input-error-caption">{detailError}</p>}
         {authPromptOpen && (
           <div className="modal-dialog-overlay" onClick={() => setAuthPromptOpen(false)}>
             <div
@@ -1443,54 +982,10 @@ function FriendsPage() {
   );
 }
 function ProfilePage() {
-  const { currentUser, setCurrentUser, userPets, removeUserPet, favoriteIds, toggleFavorite } = useAppStore();
+  const { currentUser, setCurrentUser, userPets, removeUserPet, toggleFavorite, favoriteNotices } = useAppStore();
   const [activeProfileTab, setActiveProfileTab] = useState<'pets' | 'favorites'>('pets');
   const [isEditing, setIsEditing] = useState(false);
-  const [favoriteNotices, setFavoriteNotices] = useState<PetNotice[]>([]);
-
-  React.useEffect(() => {
-    let isActive = true;
-    if (!currentUser || favoriteIds.length === 0) {
-      setFavoriteNotices([]);
-      return () => {
-        isActive = false;
-      };
-    }
-
-    Promise.all(favoriteIds.map((id) => noticesApi.byId(id).then(petNoticeFromApi).catch(() => null)))
-      .then((items) => {
-        if (isActive) setFavoriteNotices(items.filter((item): item is PetNotice => item !== null));
-      });
-
-    return () => {
-      isActive = false;
-    };
-  }, [currentUser, favoriteIds]);
-
-  if (!currentUser) {
-    return (
-      <div className="layout-page-container standard-page-layout">
-        <HeaderBar />
-        <main className="content-readable-area">
-          <div className="state-empty-box">
-            <span className="state-empty-symbol">🔒</span>
-            <h2 className="state-empty-title">Sign in to view your profile</h2>
-            <p className="state-empty-desc">
-              Manage your registered pets, view saved favorites, and update your personal information.
-            </p>
-            <div className="auth-buttons-inline">
-              <Link to="/login" className="btn-primary-filled">
-                LOG IN
-              </Link>
-              <Link to="/register" className="btn-auth-outline">
-                REGISTRATION
-              </Link>
-            </div>
-          </div>
-        </main>
-      </div>
-    );
-  }
+  if (!currentUser) return <Navigate to="/login" replace />;
 
   const profileSchema = Yup.object().shape({
     name: Yup.string().required('Full name is required'),
@@ -1740,8 +1235,8 @@ function AddPetPage() {
       .required('Birthday or adoption date is required'),
     species: Yup.string().required('Species is required'),
     sex: Yup.string().required('Sex is required'),
-    imageUrl: Yup.string().url('Please enter a valid image URL').required('Image URL is required'),
-    comments: Yup.string().min(10, 'Please write a brief description').required('Comments are required'),
+    imageUrl: Yup.string().matches(/^https?:\/\/.*\.(?:png|jpg|jpeg|gif|bmp|webp)$/, 'Use a direct image URL').required('Image URL is required'),
+
   });
 
   if (!currentUser) {
@@ -1776,12 +1271,11 @@ function AddPetPage() {
               species: 'Dog',
               sex: 'Male',
               imageUrl: '',
-              comments: '',
             }}
             validationSchema={addPetSchema}
             onSubmit={async (values, { setSubmitting, setStatus }) => {
               try {
-                await usersApi.addPet({
+                await addUserPet({
                   name: values.name,
                   title: values.title,
                   imgURL: values.imageUrl,
@@ -1789,16 +1283,8 @@ function AddPetPage() {
                   birthday: values.birthday,
                   sex: values.sex.toLowerCase() as NoticeSex,
                 });
-                addUserPet({
-                  name: values.name,
-                  species: values.species,
-                  birthday: values.birthday,
-                  sex: values.sex,
-                  imageUrl: values.imageUrl,
-                  comments: values.comments,
-                });
                 setSuccessBanner(true);
-                window.setTimeout(() => navigate('/profile'), 600);
+                navigate('/profile', { replace: true });
               } catch (error) {
                 setStatus(getApiErrorMessage(error, 'Unable to save this pet right now.'));
               } finally {
@@ -1870,7 +1356,17 @@ function AddPetPage() {
                       <option value="Dog">Dog</option>
                       <option value="Cat">Cat</option>
                       <option value="Bird">Bird</option>
-                      <option value="Other">Other</option>
+                      <option value="Turtle">Turtle</option>
+                      <option value="Fish">Fish</option>
+                      <option value="Monkey">Monkey</option>
+                      <option value="Snake">Snake</option>
+                      <option value="Lizard">Lizard</option>
+                      <option value="Frog">Frog</option>
+                      <option value="Ants">Ants</option>
+                      <option value="Bees">Bees</option>
+                      <option value="Butterfly">Butterfly</option>
+                      <option value="Spider">Spider</option>
+                      <option value="Scorpion">Scorpion</option>
                     </Field>
                   </div>
                 </div>
@@ -1897,25 +1393,10 @@ function AddPetPage() {
                     id="pet-image-input"
                     name="imageUrl"
                     type="url"
-                    placeholder="https://images.unsplash.com/..."
+                    placeholder="https://example.com/pet.webp"
                     className={`text-input-field ${touched.imageUrl && errors.imageUrl ? 'has-error' : ''}`}
                   />
                   <ErrorMessage name="imageUrl" component="div" className="input-error-caption" />
-                </div>
-
-                <div className="input-field-group">
-                  <label htmlFor="pet-comments-input" className="input-field-label">
-                    Comments & Description
-                  </label>
-                  <Field
-                    id="pet-comments-input"
-                    as="textarea"
-                    rows={4}
-                    name="comments"
-                    placeholder="Tell us about food habits, personality, medical info..."
-                    className={`text-input-field textarea-field ${touched.comments && errors.comments ? 'has-error' : ''}`}
-                  />
-                  <ErrorMessage name="comments" component="div" className="input-error-caption" />
                 </div>
 
                 <div className="form-submit-actions-row">
@@ -1943,112 +1424,20 @@ function AddPetPage() {
   );
 }
 export default function App() {
-  const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
-  const [isSessionReady, setIsSessionReady] = useState(false);
-
-  const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
-  const [userPets, setUserPets] = useState<UserPetRecord[]>([]);
-
-  React.useEffect(() => {
-    let isActive = true;
-    const token = getStoredToken();
-
-    if (!token) {
-      setIsSessionReady(true);
-      return () => {
-        isActive = false;
-      };
-    }
-
-    usersApi.full()
-      .then((user) => {
-        if (!isActive) return;
-        setCurrentUser(userProfileFromApi(user));
-        setFavoriteIds((user.noticesFavorites || []).map((notice) => notice._id));
-        setUserPets(userPetsFromApi(user.pets));
-      })
-      .catch(() => {
-        if (isActive) setCurrentUser(null);
-      })
-      .finally(() => {
-        if (isActive) setIsSessionReady(true);
-      });
-
-    return () => {
-      isActive = false;
-    };
-  }, []);
-
-  const toggleFavorite = (id: string) => {
-    const isCurrentlyFavorite = favoriteIds.includes(id);
-    setFavoriteIds((prev) => prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]);
-
-    if (currentUser) {
-      const request = isCurrentlyFavorite
-        ? noticesApi.removeFavorite(id)
-        : noticesApi.addFavorite(id);
-      request.catch(() => {
-        setFavoriteIds((prev) => isCurrentlyFavorite ? [...prev, id] : prev.filter((item) => item !== id));
-      });
-    }
-  };
-
-  const addUserPet = (pet: Omit<UserPetRecord, 'id'>) => {
-    const newRecord: UserPetRecord = {
-      ...pet,
-      id: `pet-${Date.now()}`
-    };
-    setUserPets((prev) => [newRecord, ...prev]);
-  };
-
-  const removeUserPet = async (id: string) => {
-    if (!currentUser) {
-      setUserPets((prev) => prev.filter((p) => p.id !== id));
-      return;
-    }
-
-    try {
-      const updatedUser = await usersApi.removePet(id);
-      setUserPets(userPetsFromApi(updatedUser.pets));
-    } catch {
-      setUserPets((prev) => prev);
-    }
-  };
-
-  const clearPrivateData = () => {
-    setFavoriteIds([]);
-    setUserPets([]);
-  };
-
-  if (!isSessionReady) {
-    return <div className="app-session-loading" role="status">Loading your Petlove session…</div>;
-  }
-
   return (
-    <AppStoreContext.Provider
-      value={{
-        currentUser,
-        setCurrentUser,
-        favoriteIds,
-        toggleFavorite,
-        userPets,
-        addUserPet,
-        removeUserPet,
-        clearPrivateData,
-      }}
-    >
+    <AppStoreProvider>
       <Routes>
         <Route path="/" element={<Navigate to="/home" replace />} />
         <Route path="/home" element={<HomePage header={<HeaderBar variant="hero" />} />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/news" element={<NewsPage />} />
+        <Route path="/news" element={<NewsPage header={<HeaderBar />} />} />
         <Route path="/notices" element={<NoticesPage />} />
         <Route path="/friends" element={<FriendsPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/add-pet" element={<AddPetPage />} />
         <Route path="*" element={<Navigate to="/home" replace />} />
       </Routes>
-    </AppStoreContext.Provider>
+    </AppStoreProvider>
   );
 }

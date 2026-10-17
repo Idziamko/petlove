@@ -20,6 +20,21 @@
   --transition-fast: 0.2s ease-in-out;
 }
 
+.app-notification {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 2000;
+  display: flex;
+  gap: 16px;
+  max-width: min(440px, calc(100vw - 32px));
+  padding: 16px;
+  border: 1px solid #ef2447;
+  border-radius: 16px;
+  color: #262626;
+  background: #fff;
+}
+
 .app-session-loading {
   min-height: 100vh;
   display: grid;
