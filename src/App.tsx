@@ -123,10 +123,12 @@ function HeaderBar({ variant = 'standard' }: HeaderBarProps) {
       notifyError(message);
     } finally {
       navigate('/home', { replace: true });
-      setCurrentUser(null);
-      clearPrivateData();
       setLogoutOpen(false);
       setMenuOpen(false);
+      window.setTimeout(() => {
+        setCurrentUser(null);
+        clearPrivateData();
+      }, 0);
     }
   };
 
