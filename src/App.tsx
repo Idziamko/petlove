@@ -211,12 +211,19 @@ function HeaderBar({ variant = 'standard' }: HeaderBarProps) {
             >
               <img src={`${import.meta.env.BASE_URL}icons/modal-close.svg`} alt="" />
             </button>
-            <h2 className="state-empty-title">Log out of Petlove?</h2>
-            <p className="state-empty-desc">Your local session will be cleared from this device.</p>
-            {logoutError && <p className="input-error-caption" role="alert">{logoutError}</p>}
-            <div className="auth-buttons-inline">
-              <button type="button" className="btn-auth-outline" onClick={() => setLogoutOpen(false)}>Cancel</button>
-              <button type="button" className="btn-primary-filled" onClick={handleLogout}>Yes, log out</button>
+            <div className="logout-modal-content">
+              <div className="logout-modal-icon">
+                <img src={`${import.meta.env.BASE_URL}icons/modal-emoji-circle.svg`} alt="" />
+                <span aria-hidden="true">🐈</span>
+              </div>
+              <div className="logout-modal-copy">
+                <h2>Already leaving?</h2>
+                {logoutError && <p className="input-error-caption" role="alert">{logoutError}</p>}
+                <div className="auth-buttons-inline">
+                  <button type="button" className="btn-primary-filled" onClick={handleLogout}>Yes</button>
+                  <button type="button" className="logout-cancel-btn" onClick={() => setLogoutOpen(false)}>Cancel</button>
+                </div>
+              </div>
             </div>
           </div>
         </div>

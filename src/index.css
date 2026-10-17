@@ -1755,12 +1755,56 @@ img {
 
 .logout-modal-card {
   width: min(448px, calc(100vw - 40px));
+  height: 364px;
   min-height: 364px;
 }
 
-.logout-modal-card .state-empty-title { margin-top: 102px; }
+.logout-modal-content {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
 
-.logout-modal-card .state-empty-desc { margin: 14px auto 28px; max-width: 288px; }
+.logout-modal-icon {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  flex: 0 0 auto;
+}
+
+.logout-modal-icon img { width: 80px; height: 80px; }
+
+.logout-modal-icon span {
+  position: absolute;
+  inset: 18px;
+  display: grid;
+  place-items: center;
+  color: var(--color-white);
+  font-size: 44px;
+  line-height: 44px;
+}
+
+.logout-modal-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+
+.logout-modal-copy h2 {
+  margin: 0;
+  color: var(--color-dark);
+  font-size: 24px;
+  line-height: 28px;
+  font-weight: 700;
+  letter-spacing: -0.72px;
+  white-space: nowrap;
+}
 
 .logout-modal-card .auth-buttons-inline { justify-content: center; gap: 8px; }
 
@@ -1772,6 +1816,13 @@ img {
   line-height: 20px;
   letter-spacing: -0.48px;
 }
+
+.logout-modal-card .logout-cancel-btn {
+  background: rgba(38, 38, 38, 0.05);
+  color: var(--color-dark);
+}
+
+.logout-modal-card .logout-cancel-btn:hover { background: rgba(38, 38, 38, 0.1); }
 
 @media (max-width: 767px) {
   .attention-modal-card {
@@ -1816,12 +1867,19 @@ img {
 
   .logout-modal-card {
     width: 335px;
+    height: 270px;
     min-height: 270px;
   }
 
-  .logout-modal-card .state-empty-title { margin-top: 88px; }
+  .logout-modal-content { top: 40px; }
 
-  .logout-modal-card .state-empty-desc { margin-bottom: 20px; }
+  .logout-modal-copy { gap: 20px; }
+
+  .logout-modal-copy h2 {
+    font-size: 20px;
+    line-height: 20px;
+    letter-spacing: -0.4px;
+  }
 
   .logout-modal-card .auth-buttons-inline button {
     width: 137px;
@@ -1830,6 +1888,8 @@ img {
     font-size: 14px;
     line-height: 18px;
   }
+
+  .logout-modal-card .auth-buttons-inline .logout-cancel-btn { width: 134px; }
 }
 
 @media (max-width: 1024px) {
